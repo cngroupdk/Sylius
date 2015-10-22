@@ -14,8 +14,8 @@ namespace spec\Sylius\Bundle\TranslationBundle\Doctrine\ORM;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Sylius\Component\Translation\Provider\LocaleProviderInterface;
@@ -44,7 +44,7 @@ class TranslatableResourceRepositorySpec extends ObjectBehavior
         ;
 
         $queryBuilder
-            ->from(Argument::any(), Argument::any())
+            ->from(Argument::any(), Argument::any(), Argument::cetera())
             ->willReturn($queryBuilder)
         ;
 

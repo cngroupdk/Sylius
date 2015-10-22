@@ -15,8 +15,6 @@ use Sylius\Component\Shipping\Model\ShippingSubjectInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Calculator which charges a flat rate per item.
- *
  * @author Paweł Jędrzejewski <pawel@sylius.org>
  */
 class PerItemRateCalculator extends Calculator
@@ -54,9 +52,7 @@ class PerItemRateCalculator extends Calculator
             ->setRequired(array(
                 'amount'
             ))
-            ->setAllowedTypes(array(
-                'amount' => array('numeric')
-            ))
+            ->setAllowedTypes('amount', 'numeric')
         ;
     }
 }

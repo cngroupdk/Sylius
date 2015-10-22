@@ -32,16 +32,16 @@
         }
     ],
     "require": {
-        "php":                      ">=5.3.3",
+        "php":                      ">=5.5.9",
 
-        "sylius/user":              "0.15.*@dev",
-        "sylius/resource-bundle":   "0.15.*@dev",
-        "sylius/mailer-bundle":     "0.15.*@dev",
-        "symfony/framework-bundle": "~2.3"
+        "sylius/user":              "0.16.*",
+        "sylius/resource-bundle":   "0.16.*",
+        "sylius/mailer-bundle":     "0.16.*",
+        "symfony/framework-bundle": "~2.7"
     },
     "require-dev": {
         "phpspec/phpspec": "~2.1",
-        "symfony/form":    "~2.3"
+        "symfony/form":    "~2.7"
     },
     "config": {
         "bin-dir": "bin"
@@ -52,9 +52,10 @@
     "autoload-dev": {
         "psr-4": { "Sylius\\Bundle\\UserBundle\\spec\\": "spec/" }
     },
+    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.15-dev"
+            "dev-master": "0.16-dev"
         }
     }
 }

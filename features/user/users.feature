@@ -5,9 +5,7 @@ Feature: Customers management
     I want to be able to list all customers
 
     Background:
-        Given there is default currency configured
-          And there is default channel configured
-          And I am logged in as administrator
+        Given store has default configuration
           And there are products:
             | name | price |
             | Mug  | 5.99  |
@@ -35,6 +33,7 @@ Feature: Customers management
         And order #000000002 has following items:
             | product | quantity |
             | Mug     | 3        |
+        And I am logged in as administrator
 
     Scenario: Seeing index of all customers
         Given I am on the dashboard page
@@ -143,13 +142,6 @@ Feature: Customers management
           And I click "delete" from the confirmation modal
          Then I should be on the customer index page
           And I should see "Customer has been successfully deleted."
-
-    @javascript
-    Scenario: Deleted customer disappears from the list
-        Given I am on the page of customer with email "rick@foo.com"
-         When I press "delete"
-          And I click "delete" from the confirmation modal
-         Then I should be on the customer index page
           And I should not see customer with email "rick@foo.com" in that list
 
     @javascript

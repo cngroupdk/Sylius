@@ -12,11 +12,11 @@
 namespace spec\Sylius\Bundle\TaxonomyBundle\Doctrine\ORM;
 
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\EntityManager;
 use Sylius\Component\Taxonomy\Model\TaxonomyInterface;
 
 class TaxonRepositorySpec extends ObjectBehavior
@@ -35,7 +35,7 @@ class TaxonRepositorySpec extends ObjectBehavior
     {
         $em->createQueryBuilder()->shouldBeCalled()->willReturn($builder);
         $builder->select('o')->shouldBeCalled()->willReturn($builder);
-        $builder->from(Argument::any(), 'o')->shouldBeCalled()->willReturn($builder);
+        $builder->from(Argument::any(), 'o', Argument::cetera())->shouldBeCalled()->willReturn($builder);
         $builder->addSelect('translation')->shouldBeCalled()->willReturn($builder);
         $builder->leftJoin('o.translations', 'translation')->shouldBeCalled()->willReturn($builder);
         $builder->where('o.taxonomy = :taxonomy')->shouldBeCalled()->willReturn($builder);
@@ -53,7 +53,7 @@ class TaxonRepositorySpec extends ObjectBehavior
     {
         $em->createQueryBuilder()->shouldBeCalled()->willReturn($builder);
         $builder->select('o')->shouldBeCalled()->willReturn($builder);
-        $builder->from(Argument::any(), 'o')->shouldBeCalled()->willReturn($builder);
+        $builder->from(Argument::any(), 'o', Argument::cetera())->shouldBeCalled()->willReturn($builder);
         $builder->addSelect('translation')->shouldBeCalled()->willReturn($builder);
         $builder->leftJoin('o.translations', 'translation')->shouldBeCalled()->willReturn($builder);
         $builder->where('translation.permalink = :permalink')->shouldBeCalled()->willReturn($builder);

@@ -12,7 +12,6 @@
 namespace spec\Sylius\Component\Variation\Model;
 
 use PhpSpec\ObjectBehavior;
-use Sylius\Component\Variation\Model\OptionValueInterface;
 
 /**
  * @author Gonzalo Vilaseca <gvilaseca@reiss.co.uk>
@@ -43,10 +42,5 @@ class OptionTranslationSpec extends ObjectBehavior
     {
         $this->setPresentation('Size');
         $this->getPresentation()->shouldReturn('Size');
-    }
-
-    function it_has_fluent_interface()
-    {
-        $this->setPresentation('Size')->shouldReturn($this);
     }
 }

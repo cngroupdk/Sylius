@@ -15,17 +15,11 @@ use Sylius\Component\Shipping\Model\ShippingSubjectInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Calculator which charges a one rate for first item and other for next items.
- *
  * @author Paweł Jędrzejewski <pawel@sylius.org>
  */
 class FlexibleRateCalculator extends Calculator
 {
     /**
-     * Calculates flexible rate per item on the shipment.
-     * It has defined cost for first item and a separate cost
-     * for each additional item.
-     *
      * {@inheritdoc}
      */
     public function calculate(ShippingSubjectInterface $subject, array $configuration)
@@ -73,11 +67,9 @@ class FlexibleRateCalculator extends Calculator
                 'first_item_cost',
                 'additional_item_cost'
             ))
-            ->setAllowedTypes(array(
-                'first_item_cost'       => array('numeric'),
-                'additional_item_cost'  => array('numeric'),
-                'additional_item_limit' => array('integer')
-            ))
+            ->setAllowedTypes('first_item_cost', 'numeric')
+            ->setAllowedTypes('additional_item_cost', 'numeric')
+            ->setAllowedTypes('additional_item_limit', 'integer')
         ;
     }
 }

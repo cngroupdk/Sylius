@@ -6,6 +6,5 @@ sylius:
     attribute:
       name: Nom interne
       presentation: Présentation
-    archetype:
-      name: Nom
-      properties: Propriétés
+      type: Type
+      choices: Choix

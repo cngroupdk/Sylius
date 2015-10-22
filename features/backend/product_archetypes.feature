@@ -5,13 +5,8 @@ Feature: Product archetypes
     I want to be able to create archetypes
 
     Background:
-        Given there is default currency configured
-        And there are following locales configured:
-            | code  | enabled |
-            | en_US | yes     |
-        And there is default channel configured
-        And I am logged in as administrator
-        And there are following options:
+        Given store has default configuration
+          And there are following options:
             | name             | presentation | values                     |
             | T-Shirt color    | Color        | Red, Blue, Green           |
             | T-Shirt size     | Size         | S, M, L                    |
@@ -19,19 +14,20 @@ Feature: Product archetypes
             | Beverage size    | Size         | Tall, Grande, Venti        |
             | Beverage milk    | Milk         | None, Whole, Skinny, Soya  |
             | Coffee variety   | Variety      | Colombian, Ethiopian       |
-        And there are following attributes:
+          And there are following attributes:
             | name                  | presentation   |
             | T-Shirt collection    | Collection     |
             | T-Shirt fabric        | T-Shirt fabric |
             | Bag material          | Material       |
             | Beverage calories     | Calories       |
             | Coffee caffeine       | Caffeine       |
-        And there is archetype "T-Shirt" with following configuration:
+          And there is archetype "T-Shirt" with following configuration:
             | options    | T-Shirt color, T-Shirt size        |
             | attributes | T-Shirt collection, T-Shirt fabric |
-        And there is archetype "Beverage" with following configuration:
+          And there is archetype "Beverage" with following configuration:
             | options    | Beverage size, Beverage milk       |
             | attributes | Beverage calories                  |
+          And I am logged in as administrator
 
     Scenario: Seeing index of all archetypes
         Given I am on the dashboard page
@@ -99,6 +95,11 @@ Feature: Product archetypes
         Then I should be on the product archetype index page
         And I should see "Archetype has been successfully updated."
 
+    Scenario: Parent archetype choices list
+        Given I am editing product archetype "T-Shirt"
+        Then I should not see Parent "T-Shirt" as available choice
+        And I should see Parent "Beverage" as available choice
+
     Scenario: Inheriting the properties from parent archetype to a child archetype
         Given I am on the product archetype creation page
         When I fill in "Code" with "coffee"
@@ -116,4 +117,5 @@ Feature: Product archetypes
         When I click "delete" near "T-Shirt"
         And I click "delete" from the confirmation modal
         Then I should be on the product archetype index page
-        And I should see "There are no archetypes defined"
+        And I should see "Archetype has been successfully deleted"
+        And I should not see archetype with name "T-Shirt" in the list

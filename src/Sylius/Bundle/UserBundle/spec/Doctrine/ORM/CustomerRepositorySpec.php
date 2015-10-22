@@ -12,13 +12,13 @@
 namespace spec\Sylius\Bundle\UserBundle\Doctrine\ORM;
 
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\FilterCollection;
 use Doctrine\ORM\QueryBuilder;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\EntityManager;
 
 class CustomerRepositorySpec extends ObjectBehavior
 {
@@ -48,7 +48,7 @@ class CustomerRepositorySpec extends ObjectBehavior
 
         $em->createQueryBuilder()->shouldBeCalled()->willReturn($builder);
         $builder->select('o')->shouldBeCalled()->willReturn($builder);
-        $builder->from(Argument::any(), 'o')->shouldBeCalled()->willReturn($builder);
+        $builder->from(Argument::any(), 'o', Argument::cetera())->shouldBeCalled()->willReturn($builder);
         $builder->andWhere($expr)->shouldBeCalled()->willReturn($builder);
         $builder->setParameter('id', 1)->shouldBeCalled()->willReturn($builder);
         $builder->getQuery()->shouldBeCalled()->willReturn($query);
@@ -71,7 +71,7 @@ class CustomerRepositorySpec extends ObjectBehavior
 
         $em->createQueryBuilder()->shouldBeCalled()->willReturn($builder);
         $builder->select('o')->shouldBeCalled()->willReturn($builder);
-        $builder->from(Argument::any(), 'o')->shouldBeCalled()->willReturn($builder);
+        $builder->from(Argument::any(), 'o', Argument::cetera())->shouldBeCalled()->willReturn($builder);
         $builder->leftJoin('o.user', 'user')->shouldBeCalled()->willReturn($builder);
 
         $builder->expr()->willReturn($expr);

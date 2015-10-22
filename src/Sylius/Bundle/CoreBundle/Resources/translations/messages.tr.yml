@@ -25,6 +25,11 @@ sylius:
     group:
       name: Ad
       roles: Roller
+    channel:
+      taxonomies: Kategoriler
+      locales: Diller
+      shipping_methods: Kargolama Yöntemleri
+      payment_methods: Ödeme Yöntemleri
     image:
       file: Resim
     locale:
@@ -64,6 +69,10 @@ sylius:
       created_at_to: Hedef
       number: Sipariş numarası
       shipping_address: Gönderi adı
+    payment_filter:
+      created_at_from: Kaynak
+      created_at_to: Hedef
+      number: Sipariş numarası
     shipping_method:
       zone: Bölge
     taxon:
@@ -76,6 +85,7 @@ sylius:
       enabled: Etkin
       first_name: Ad
       groups: Gruplar
+      roles: Roller
       last_name: Soyad
       password: Şifre
       shipping_address: Teslimat adresi
@@ -91,3 +101,8 @@ sylius:
       sku: Stok Kodu
       weight: Ağırlığı
       width: Genişliği
+    attribute:
+      product_attribute_value:
+        value: Değer
+    guest:
+      email: E-posta

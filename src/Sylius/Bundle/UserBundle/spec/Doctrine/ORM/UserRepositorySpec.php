@@ -12,14 +12,14 @@
 namespace spec\Sylius\Bundle\UserBundle\Doctrine\ORM;
 
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\FilterCollection;
 use Doctrine\ORM\QueryBuilder;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\EntityManager;
 
 class UserRepositorySpec extends ObjectBehavior
 {
@@ -51,7 +51,7 @@ class UserRepositorySpec extends ObjectBehavior
 
         $em->createQueryBuilder()->shouldBeCalled()->willReturn($builder);
         $builder->select('o')->shouldBeCalled()->willReturn($builder);
-        $builder->from(Argument::any(), 'o')->shouldBeCalled()->willReturn($builder);
+        $builder->from(Argument::any(), 'o', Argument::cetera())->shouldBeCalled()->willReturn($builder);
 
         $builder->expr()->willReturn($expr);
         $expr->like(Argument::any(), Argument::any())->willReturn($expr);
@@ -92,7 +92,7 @@ class UserRepositorySpec extends ObjectBehavior
 
         $em->createQueryBuilder()->shouldBeCalled()->willReturn($builder);
         $builder->select('o')->shouldBeCalled()->willReturn($builder);
-        $builder->from(Argument::any(), 'o')->shouldBeCalled()->willReturn($builder);
+        $builder->from(Argument::any(), 'o', Argument::cetera())->shouldBeCalled()->willReturn($builder);
         $builder->leftJoin('o.customer', 'customer')->shouldBeCalled()->willReturn($builder);
         $builder->addSelect('customer')->shouldBeCalled()->willReturn($builder);
         $builder->where($expr)->shouldBeCalled()->willReturn($builder);
@@ -121,7 +121,7 @@ class UserRepositorySpec extends ObjectBehavior
         $expr->lte(Argument::any(), Argument::any())->shouldBeCalled()->willReturn($expr);
 
         $builder->select('o')->shouldBeCalled()->willReturn($builder);
-        $builder->from(Argument::any(), 'o')->shouldBeCalled()->willReturn($builder);
+        $builder->from(Argument::any(), 'o', Argument::cetera())->shouldBeCalled()->willReturn($builder);
         $builder->andWhere(Argument::type('Doctrine\ORM\Query\Expr'))->shouldBeCalled()->willReturn($builder);
         $builder->setParameter('from', $from)->shouldBeCalled()->willReturn($builder);
         $builder->setParameter('to', $to)->shouldBeCalled()->willReturn($builder);
@@ -146,7 +146,7 @@ class UserRepositorySpec extends ObjectBehavior
 
         $em->createQueryBuilder()->shouldBeCalled()->willReturn($builder);
         $builder->select('o')->shouldBeCalled()->willReturn($builder);
-        $builder->from(Argument::any(), 'o')->shouldBeCalled()->willReturn($builder);
+        $builder->from(Argument::any(), 'o', Argument::cetera())->shouldBeCalled()->willReturn($builder);
 
         $builder->leftJoin('o.customer', 'customer')->shouldBeCalled()->willReturn($builder);
         $builder->addSelect('customer')->shouldBeCalled()->willReturn($builder);

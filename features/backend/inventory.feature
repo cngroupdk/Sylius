@@ -5,9 +5,7 @@ Feature: Inventory tracking
     I want to be able to manage stock levels and availability
 
     Background:
-        Given there is default currency configured
-          And there is default channel configured
-          And I am logged in as administrator
+        Given store has default configuration
           And there are following options:
             | name          | presentation | values           |
             | T-Shirt color | Color        | Red, Blue, Green |
@@ -18,6 +16,7 @@ Feature: Inventory tracking
             | Black T-Shirt  | 19.99 | T-Shirt size                |
             | Mug            | 5.99  |                             |
             | Sticker        | 10.00 |                             |
+          And I am logged in as administrator
 
     Scenario: Seeing index of inventory
         Given I am on the dashboard page
@@ -47,7 +46,7 @@ Feature: Inventory tracking
     Scenario: Updating variant stock level
         Given product "Black T-Shirt" is available in all variations
           And I am on the page of product "Black T-Shirt"
-         When I click "edit" near "T-Shirt size: L"
+         When I click "edit" near "Size: L"
           And I fill in "Current stock" with "10"
           And I press "Save changes"
          Then I should be on the page of product "Black T-Shirt"
@@ -56,7 +55,7 @@ Feature: Inventory tracking
     Scenario: Making variant not available on demand
         Given product "Black T-Shirt" is available in all variations
           And I am on the page of product "Black T-Shirt"
-         When I click "edit" near "T-Shirt size: L"
+         When I click "edit" near "Size: L"
           And I uncheck "Available on demand"
           And I press "Save changes"
          Then I should be on the page of product "Black T-Shirt"

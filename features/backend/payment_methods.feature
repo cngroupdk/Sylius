@@ -5,13 +5,12 @@ Feature: Payment methods
     I want to be able to manage payment methods
 
     Background:
-        Given there is default currency configured
-          And there is default channel configured
-          And I am logged in as administrator
+        Given store has default configuration
           And the following payment methods exist:
             | name        | gateway | calculator | calculator_configuration |
             | Credit Card | stripe  | fixed      | amount: 10               |
             | PayPal      | paypal  | percent    | percent: 5               |
+          And I am logged in as administrator
 
     Scenario: Seeing index of all payment methods
         Given I am on the dashboard page
@@ -30,7 +29,7 @@ Feature: Payment methods
           And I follow "Create payment method"
          Then I should be on the payment method creation page
 
-    Scenario: Submitting invalid form without name
+    Scenario: Submitting form without specifying the required values
         Given I am on the payment method creation page
          When I press "Create"
          Then I should still be on the payment method creation page
@@ -73,6 +72,46 @@ Feature: Payment methods
           And I press "Save changes"
          Then I should be on the payment method index page
           And I should see payment method with name "PayPal PRO" in the list
+
+    Scenario: Submitting invalid form without percent
+        Given I am editing payment method "PayPal"
+         When I fill in "Name" with "PayPal PRO"
+          And I leave "%" empty
+          And I press "Save changes"
+         Then I should be editing payment method "PayPal"
+          And I should see "Please enter the fee percent."
+
+    Scenario: Submitting invalid form with negative percent
+        Given I am editing payment method "PayPal"
+         When I fill in "Name" with "PayPal PRO"
+          And I fill in "%" with "-1"
+          And I press "Save changes"
+         Then I should be editing payment method "PayPal"
+          And I should see "Percent fee cannot be lower than 0."
+
+    Scenario: Submitting invalid form with percent over 100
+        Given I am editing payment method "PayPal"
+         When I fill in "Name" with "PayPal PRO"
+          And I fill in "%" with "120"
+          And I press "Save changes"
+         Then I should be editing payment method "PayPal"
+          And I should see "Percent fee cannot be greater than 100."
+
+    Scenario: Submitting invalid form without amount
+        Given I am editing payment method "Credit Card"
+         When I fill in "Name" with "Master Card"
+          And I leave "Amount" empty
+          And I press "Save changes"
+         Then I should be editing payment method "Credit Card"
+          And I should see "Please enter the fee amount."
+
+    Scenario: Submitting invalid form with negative amount
+        Given I am editing payment method "Credit Card"
+         When I fill in "Name" with "Master Card"
+          And I fill in "Amount" with "-1"
+          And I press "Save changes"
+         Then I should be editing payment method "Credit Card"
+          And I should see "The fee cannot be lower than 0."
 
     @javascript
     Scenario: Deleting payment method

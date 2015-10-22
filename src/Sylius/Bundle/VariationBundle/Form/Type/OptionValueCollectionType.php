@@ -15,7 +15,7 @@ use Sylius\Component\Variation\Model\OptionInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * This is special collection type, inspired by original 'collection' type
@@ -28,15 +28,11 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class OptionValueCollectionType extends AbstractType
 {
     /**
-     * Variable name.
-     *
      * @var string
      */
     protected $variableName;
 
     /**
-     * Constructor.
-     *
      * @param string $variableName
      */
     public function __construct($variableName)
@@ -64,7 +60,7 @@ class OptionValueCollectionType extends AbstractType
             }
 
             $builder->add((string) $option->getId(), sprintf('sylius_%s_option_value_choice', $this->variableName), array(
-                'label'         => $option->getName(),
+                'label'         => $option->getPresentation() ?: $option->getName(),
                 'option'        => $option,
                 'property_path' => '['.$i.']',
             ));
@@ -74,7 +70,7 @@ class OptionValueCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
             ->setDefaults(array(

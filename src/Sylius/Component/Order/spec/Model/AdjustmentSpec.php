@@ -12,7 +12,6 @@
 namespace spec\Sylius\Component\Order\Model;
 
 use PhpSpec\ObjectBehavior;
-use Sylius\Component\Order\Model\AdjustableInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
 
@@ -101,7 +100,8 @@ class AdjustmentSpec extends ObjectBehavior
 
     function its_amount_should_accept_only_integer()
     {
-        $this->setAmount(4498)->getAmount()->shouldBeInteger();
+        $this->setAmount(4498);
+        $this->getAmount()->shouldBeInteger();
         $this->shouldThrow('\InvalidArgumentException')->duringSetAmount(44.98 * 100);
         $this->shouldThrow('\InvalidArgumentException')->duringSetAmount('4498');
         $this->shouldThrow('\InvalidArgumentException')->duringSetAmount(round(44.98 * 100));
@@ -147,14 +147,5 @@ class AdjustmentSpec extends ObjectBehavior
     function it_has_no_last_update_date_by_default()
     {
         $this->getUpdatedAt()->shouldReturn(null);
-    }
-
-    function it_has_fluent_interface(AdjustableInterface $adjustable)
-    {
-        $this->setAdjustable($adjustable)->shouldReturn($this);
-        $this->setLabel('Shipping fee')->shouldReturn($this);
-        $this->setDescription('Tax (23%)')->shouldReturn($this);
-        $this->setAmount(299)->shouldReturn($this);
-        $this->setNeutral(true)->shouldReturn($this);
     }
 }

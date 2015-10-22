@@ -20,6 +20,7 @@ use Symfony\Component\Intl\Intl;
  * Default country fixtures.
  *
  * @author Paweł Jędrzejewski <pawel@sylius.org>
+ * @author Gustavo Perdomo <gperdomor@gmail.com>
  */
 class LoadCountriesData extends DataFixture
 {
@@ -83,24 +84,10 @@ class LoadCountriesData extends DataFixture
     public function load(ObjectManager $manager)
     {
         $countryRepository = $this->getCountryRepository();
-        $countries = Intl::getRegionBundle()->getCountryNames($this->defaultLocale);
-
-        if (Intl::isExtensionLoaded()) {
-            $localisedCountries = array('es_ES' => Intl::getRegionBundle()->getCountryNames('es_ES'));
-        } else {
-            $localisedCountries = array();
-        }
+        $countries = Intl::getRegionBundle()->getCountryNames();
 
         foreach ($countries as $isoName => $name) {
             $country = $countryRepository->createNew();
-
-            $country->setCurrentLocale($this->defaultLocale);
-            $country->setName($name);
-
-            foreach ($localisedCountries as $locale => $translatedCountries) {
-                $country->setCurrentLocale($locale);
-                $country->setName($translatedCountries[$isoName]);
-            }
 
             $country->setIsoName($isoName);
 
@@ -134,10 +121,9 @@ class LoadCountriesData extends DataFixture
         $provinceRepository = $this->getProvinceRepository();
 
         foreach ($this->states as $isoName => $name) {
-            $province = $provinceRepository->createNew()
-                ->setName($name)
-                ->setIsoName($isoName)
-            ;
+            $province = $provinceRepository->createNew();
+            $province->setName($name);
+            $province->setIsoName($isoName);
             $country->addProvince($province);
 
             $this->setReference('Sylius.Province.'.$isoName, $province);

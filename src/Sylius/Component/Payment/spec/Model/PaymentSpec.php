@@ -94,7 +94,8 @@ class PaymentSpec extends ObjectBehavior
 
     function its_amount_should_accept_only_integer()
     {
-        $this->setAmount(4498)->getAmount()->shouldBeInteger();
+        $this->setAmount(4498);
+        $this->getAmount()->shouldBeInteger();
         $this->shouldThrow('\InvalidArgumentException')->duringSetAmount(44.98 * 100);
         $this->shouldThrow('\InvalidArgumentException')->duringSetAmount('4498');
         $this->shouldThrow('\InvalidArgumentException')->duringSetAmount(round(44.98 * 100));
@@ -124,6 +125,20 @@ class PaymentSpec extends ObjectBehavior
 
         $this->setCreatedAt($date);
         $this->getCreatedAt()->shouldReturn($date);
+    }
+
+    function its_deletion_date_is_mutable(\DateTime $deletionTime)
+    {
+        $this->setDeletedAt($deletionTime);
+        $this->getDeletedAt()->shouldReturn($deletionTime);
+    }
+
+    function it_can_be_deleted()
+    {
+        $date = new \DateTime('last year');
+
+        $this->setDeletedAt($date);
+        $this->isDeleted()->shouldReturn(true);
     }
 
     function it_has_no_last_update_date_by_default()

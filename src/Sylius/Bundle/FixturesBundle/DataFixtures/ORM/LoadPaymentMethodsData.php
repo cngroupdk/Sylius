@@ -30,8 +30,8 @@ class LoadPaymentMethodsData extends DataFixture
         $manager->persist($this->createPaymentMethod('Dummy', 'dummy', 'fixed', array('amount' => 0)));
         $manager->persist($this->createPaymentMethod('PaypalExpressCheckout', 'paypal_express_checkout', 'fixed', array('amount' => 1000)));
         $manager->persist($this->createPaymentMethod('Be2bill', 'be2bill_direct', 'fixed', array('amount' => 100)));
-        $manager->persist($this->createPaymentMethod('Be2billOffsite', 'be2bill_offsite', 'percent', array('amount' => 7)));
-        $manager->persist($this->createPaymentMethod('StripeCheckout', 'stripe_checkout', 'percent', array('amount' => 5)));
+        $manager->persist($this->createPaymentMethod('Be2billOffsite', 'be2bill_offsite', 'percent', array('percent' => 7)));
+        $manager->persist($this->createPaymentMethod('StripeCheckout', 'stripe_checkout', 'percent', array('percent' => 5)));
         $manager->persist($this->createPaymentMethod('Offline', 'offline', 'fixed', array('amount' => 500)));
 
         $manager->flush();
@@ -60,7 +60,13 @@ class LoadPaymentMethodsData extends DataFixture
     {
         /* @var $method PaymentMethodInterface */
         $method = $this->getPaymentMethodRepository()->createNew();
-        $method->setName($name);
+
+        $translatedNames = array(
+            $this->defaultLocale => sprintf($name),
+            'es_ES' => sprintf($this->fakers['es_ES']->word),
+        );
+        $this->addTranslatedFields($method, $translatedNames);
+
         $method->setGateway($gateway);
         $method->setEnabled($enabled);
         $method->setFeeCalculator($feeCalculator);
@@ -69,5 +75,18 @@ class LoadPaymentMethodsData extends DataFixture
         $this->setReference('Sylius.PaymentMethod.'.$name, $method);
 
         return $method;
+    }
+
+    private function addTranslatedFields(PaymentMethodInterface $method, $translatedNames)
+    {
+        foreach ($translatedNames as $locale => $name) {
+            $method->setCurrentLocale($locale);
+            $method->setFallbackLocale($locale);
+
+            $method->setName($name);
+            $method->setDescription($this->fakers[$locale]->paragraph);
+        }
+
+        $method->setCurrentLocale($this->defaultLocale);
     }
 }

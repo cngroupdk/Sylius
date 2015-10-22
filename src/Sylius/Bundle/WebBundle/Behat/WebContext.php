@@ -11,11 +11,14 @@
 
 namespace Sylius\Bundle\WebBundle\Behat;
 
+use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Element\DocumentElement;
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Sylius\Bundle\ResourceBundle\Behat\WebContext as BaseWebContext;
 use Symfony\Component\Intl\Intl;
-use Behat\Behat\Context\SnippetAcceptingContext;
 
 /**
  * Web context.
@@ -24,6 +27,24 @@ use Behat\Behat\Context\SnippetAcceptingContext;
  */
 class WebContext extends BaseWebContext implements SnippetAcceptingContext
 {
+    /**
+     * @Given /^I am on user login page?$/
+     * @When /^I go to user login page?$/
+     */
+    public function iAmOnTheLoginPage()
+    {
+        $this->getSession()->visit($this->generatePageUrl('sylius_user_security_login'));
+    }
+
+    /**
+     * @Then /^I should (?:|still )be on user login page$/
+     * @Then /^I should be redirected to user login page$/
+     */
+    public function iShouldBeOnTheLoginPage()
+    {
+        $this->assertRoute('sylius_user_security_login');
+    }
+
     /**
      * @Given /^go to "([^""]*)" tab$/
      */
@@ -49,11 +70,12 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
     }
 
     /**
-     * @Given /^I should be on the store homepage$/
+     * @Then /^I should (?:|still )be on the store homepage$/
+     * @Then /^I should be redirected to the store homepage$/
      */
     public function iShouldBeOnTheStoreHomepage()
     {
-        $this->assertSession()->addressEquals($this->generateUrl('sylius_homepage'));
+        $this->assertRoute('sylius_homepage');
     }
 
     /**
@@ -69,15 +91,15 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
      */
     public function iAmOnMyAccountHomepage()
     {
-        $this->getSession()->visit($this->generatePageUrl('sylius_account_homepage'));
+        $this->getSession()->visit($this->generatePageUrl('sylius_account_profile_show'));
     }
 
     /**
-     * @Given /^I should be on my account homepage$/
+     * @Then /^I should (?:|still )be on my account homepage$/
      */
     public function iShouldBeOnMyAccountHomepage()
     {
-        $this->assertSession()->addressEquals($this->generateUrl('sylius_account_homepage'));
+        $this->assertRoute('sylius_account_profile_show');
     }
 
     /**
@@ -89,19 +111,11 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
     }
 
     /**
-     * @Given /^I should be on my account password page$/
+     * @Then /^I should (?:|still )be on my account password page$/
      */
     public function iShouldBeOnMyAccountPasswordPage()
     {
-        $this->assertSession()->addressEquals($this->generateUrl('sylius_account_change_password'));
-    }
-
-    /**
-     * @Then /^I should still be on my account password page$/
-     */
-    public function iShouldStillBeOnMyAccountPasswordPage()
-    {
-        $this->assertSession()->addressEquals($this->generateUrl('sylius_account_change_password'));
+        $this->assertRoute('sylius_account_change_password');
     }
 
     /**
@@ -113,27 +127,19 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
     }
 
     /**
-     * @Given /^I should be on my account profile edition page$/
+     * @Then /^I should (?:|still )be on my account profile edition page$/
      */
     public function iShouldBeOnMyProfileEditionPage()
     {
-        $this->assertSession()->addressEquals($this->generateUrl('sylius_account_profile_update'));
+        $this->assertRoute('sylius_account_profile_update');
     }
 
     /**
-     * @Given /^I should still be on my account profile edition page$/
-     */
-    public function iShouldStillBeOnMyProfileEditionPage()
-    {
-        $this->assertSession()->addressEquals($this->generateUrl('sylius_account_profile_update'));
-    }
-
-    /**
-     * @Given /^I should be on my account profile page$/
+     * @Then /^I should (?:|still )be on my account profile page$/
      */
     public function iShouldBeOnMyProfilePage()
     {
-        $this->assertSession()->addressEquals($this->generateUrl('sylius_account_homepage'));
+        $this->assertRoute('sylius_account_profile_show');
     }
 
     /**
@@ -141,7 +147,7 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
      */
     public function iShouldBeOnMyAccountOrdersPage()
     {
-        $this->assertSession()->addressEquals($this->generateUrl('sylius_account_order_index'));
+        $this->assertRoute('sylius_account_order_index');
     }
 
     /**
@@ -161,21 +167,11 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
     }
 
     /**
-     * @Then /^I should be on my account addresses page$/
+     * @Then /^I should (?:|still )be on my account addresses page$/
      */
     public function iShouldBeOnMyAccountAddressesPage()
     {
-        $this->assertSession()->addressEquals($this->generateUrl('sylius_account_address_index'));
-        $this->assertStatusCodeEquals(200);
-    }
-
-    /**
-     * @Given /^I should still be on my account addresses page$/
-     */
-    public function iShouldStillBeOnMyAccountAddressesPage()
-    {
-        $this->assertSession()->addressEquals($this->generateUrl('sylius_account_address_index'));
-        $this->assertStatusCodeEquals(200);
+        $this->assertRoute('sylius_account_address_index');
     }
 
     /**
@@ -187,39 +183,19 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
     }
 
     /**
-     * @Then /^I should be on my account address creation page$/
+     * @Then /^I should (?:|still )be on my account address creation page$/
      */
     public function iShouldBeOnMyAccountAddressCreationPage()
     {
-        $this->assertSession()->addressEquals($this->generatePageUrl('sylius_account_address_create'));
-        $this->assertStatusCodeEquals(200);
+        $this->assertRoute('sylius_account_address_create');
     }
 
     /**
-     * @Then /^I should still be on my account address creation page$/
-     */
-    public function iShouldStillBeOnMyAccountAddressCreationPage()
-    {
-        $this->assertSession()->addressEquals($this->generateUrl('sylius_account_address_create'));
-        $this->assertStatusCodeEquals(200);
-    }
-
-    /**
-     * @Then /^I should be on login page$/
-     */
-    public function iShouldBeOnLoginPage()
-    {
-        $this->assertSession()->addressEquals($this->generatePageUrl('sylius_user_security_login'));
-        $this->assertStatusCodeEquals(200);
-    }
-
-    /**
-     * @Then /^I should be on registration page$/
+     * @Then /^I should (?:|still )be on registration page$/
      */
     public function iShouldBeOnRegistrationPage()
     {
-        $this->assertSession()->addressEquals($this->generatePageUrl('sylius_user_registration'));
-        $this->assertStatusCodeEquals(200);
+        $this->assertRoute('sylius_user_registration');
     }
 
     /**
@@ -378,7 +354,7 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
      * @Then I should not see :button button near :user in :table table
      */
     public function iShouldNotSeeButtonInColumnInTable($button, $customer, $table)
-    {   
+    {
         $this->assertSession()->elementExists('css', "#".$table." tr[data-customer='$customer']");
         $this->assertSession()->elementNotExists('css', "#".$table." tr[data-customer='$customer'] form input[value=".strtoupper($button)."]");
     }
@@ -430,14 +406,15 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
      */
     public function iShouldBrowseTheStoreInLocale($name)
     {
+        $text = 'Welcome to Sylius';
+
         switch ($name) {
-            case 'English':
-                $text = 'Welcome to Sylius';
-            break;
             case 'Polish':
+            case 'Polish (Poland)':
                 $text = 'Witaj w Sylius';
             break;
             case 'German':
+            case 'German (Germany)':
                 $text = 'Englisch';
             break;
         }
@@ -472,9 +449,9 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
      */
     public function iShouldBeOnTheProductPage($name)
     {
-        $this->iAmOnTheProductPage($name);
+        $product = $this->findOneBy('product', array('name' => $name));
 
-        $this->assertStatusCodeEquals(200);
+        $this->assertSession()->addressEquals($this->generateUrl($product));
     }
 
     /**
@@ -494,9 +471,7 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
      */
     public function iShouldBeOnTheOrderPage($action, $number)
     {
-        $this->iAmOnTheOrderPage($action, $number);
-
-        $this->assertStatusCodeEquals(200);
+        $this->assertSession()->addressEquals($this->generatePageUrl('sylius_account_order_'.$action, array('number' => $number)));
     }
 
     /**
@@ -526,12 +501,47 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
      */
     public function iAddFollowingOptionValues(TableNode $table)
     {
-        $count = count($this->getSession()->getPage()->findAll('css', 'div.collection-container div.control-group'));
-
         foreach ($table->getRows() as $i => $value) {
-            $this->getSession()->getPage()->find('css', 'a:contains("Add value")')->click();
-            $this->fillField(sprintf('sylius_option[values][%d][value]', $i+$count), $value[0]);
+            $newItem = $this->addNewItemToFormCollection($this->getSession()->getPage(), 'option_values');
+            $newItem->fillField('Value', $value[0]);
         }
+    }
+
+    /**
+     * @Given /^I add choice "([^""]*)"$/
+     */
+    public function iAddChoice($value)
+    {
+        $newItem = $this->addNewItemToFormCollection($this->getSession()->getPage(), 'choices');
+        $newItem->find('css', 'input')->setValue($value);
+    }
+
+    /**
+     * @When /^I add zone member "([^"]+)"$/
+     */
+    public function iAddZoneMember($zoneMember)
+    {
+        $newItem = $this->addNewItemToFormCollection($this->getSession()->getPage(), 'zone_members');
+        $select = $newItem->find('css', 'select');
+
+        if (null === $select) {
+            throw new \Exception('There is no select field available!');
+        }
+
+        $select->selectOption($zoneMember);
+    }
+
+    /**
+     * @Given /^I remove first choice$/
+     */
+    public function iRemoveFirstChoice()
+    {
+        $collection = $this->getFormCollectionDiv($this->getSession()->getPage(), 'choices');
+
+        /** @var NodeElement $firstItem */
+        $firstItem = current($collection->findAll('css', 'div[data-form-collection="item"]'));
+
+        $firstItem->clickLink('Delete');
     }
 
     /**
@@ -603,7 +613,7 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
     {
         $this->clickLink('Show deleted');
     }
-    
+
     /**
      * @Then I should see table of :id sorted by lastName
      */
@@ -611,15 +621,15 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
     {
         $allNames = $this->getSession()->getPage()->findAll('css', '#'.$id.' > tbody > tr > td > p');
         $allSurnames = array();
-        
-        foreach ($allNames as $name){
+
+        foreach ($allNames as $name) {
             $spacePosition = strpos($name->getText(), ' ');
             $surname = substr($name->getText(), $spacePosition + 1);
             $allSurnames[] .= $surname;
         }
-        
+
         sort($allSurnames);
-        
+
         $this->assertSession()->elementTextContains('css', '#'.$id.' > tbody > tr > td > p', $allSurnames[0]);
     }
 
@@ -636,6 +646,15 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
         $this->fillField('Password', $password);
         $this->fillField('Verification', $password);
         $this->pressButton('Register');
+    }
+
+    /**
+     * @When /^(?:|I )fill in guest email with "(?P<value>(?:[^"]|\\")*)"$/
+     */
+    public function fillGuestEmail($value)
+    {
+        $value = $this->fixStepArgument($value);
+        $this->getSession()->getPage()->fillField('sylius_customer_guest[email]', $value);
     }
 
     /**
@@ -661,5 +680,64 @@ class WebContext extends BaseWebContext implements SnippetAcceptingContext
 
         $session->restart();
         $session->setCookie('REMEMBERME', $cookie);
+    }
+
+    /**
+     * @Given /^I go to page for product with empty slug$/
+     */
+    public function iGoToPageForProductWithEmptySlug()
+    {
+        $this->visitPath('/p/');
+    }
+
+    /**
+     * @Given /^I have changed my account password to "([^""]*)"$/
+     * @When /^I change my account password to "([^""]*)"$/
+     */
+    public function iChangeMyPasswordTo($newPassword)
+    {
+        $this->getSession()->visit($this->generatePageUrl('sylius_account_change_password'));
+        $this->fillField('Current password', 'sylius');
+        $this->fillField('New password', $newPassword);
+        $this->fillField('Confirmation', $newPassword);
+        $this->pressButton('Save changes');
+    }
+
+    private function assertRoute($route)
+    {
+        $this->assertSession()->addressEquals($this->generatePageUrl($route));
+
+        try {
+            $this->assertStatusCodeEquals(200);
+        } catch (UnsupportedDriverActionException $e) {
+        }
+    }
+
+    /**
+     * @param DocumentElement $page
+     * @param string $collectionName
+     *
+     * @return NodeElement
+     */
+    protected function getFormCollectionDiv(DocumentElement $page, $collectionName)
+    {
+        return $page->find('css', 'div[data-form-type="collection"][id*="'. $collectionName .'"]');
+    }
+
+    /**
+     * @param DocumentElement $page
+     * @param string $collectionName
+     *
+     * @return NodeElement
+     */
+    protected function addNewItemToFormCollection(DocumentElement $page, $collectionName)
+    {
+        $collection = $this->getFormCollectionDiv($page, $collectionName);
+
+        $collection->find('css', 'a[data-form-collection="add"]')->click();
+
+        $items = $collection->findAll('css', 'div[data-form-collection="item"]');
+
+        return end($items);
     }
 }

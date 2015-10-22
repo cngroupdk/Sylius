@@ -14,7 +14,7 @@ namespace spec\Sylius\Bundle\AddressingBundle\Form\Type;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\Form\FormBuilder;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Julien Janvier <j.janvier@gmail.com>
@@ -45,12 +45,7 @@ class CountryTypeSpec extends ObjectBehavior
     function it_builds_form_with_proper_fields(FormBuilder $builder)
     {
         $builder
-            ->add('translations', 'a2lix_translationsForms', Argument::any())
-            ->shouldBeCalled()
-            ->willReturn($builder);
-
-        $builder
-            ->add('isoName', 'text', Argument::any())
+            ->add('isoName', 'country', Argument::any())
             ->shouldBeCalled()
             ->willReturn($builder);
 
@@ -62,7 +57,7 @@ class CountryTypeSpec extends ObjectBehavior
         $this->buildForm($builder, array());
     }
 
-    function it_defines_assigned_data_class(OptionsResolverInterface $resolver)
+    function it_defines_assigned_data_class(OptionsResolver $resolver)
     {
         $resolver
             ->setDefaults(
@@ -73,6 +68,6 @@ class CountryTypeSpec extends ObjectBehavior
             )
             ->shouldBeCalled();
 
-        $this->setDefaultOptions($resolver);
+        $this->configureOptions($resolver);
     }
 }

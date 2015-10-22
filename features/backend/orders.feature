@@ -5,9 +5,7 @@ Feature: Orders management
     I want to be able to list, view, edit and create orders
 
     Background:
-        Given there is default currency configured
-          And there is default channel configured
-          And I am logged in as administrator
+        Given store has default configuration
           And the following zones are defined:
             | name         | type    | members                       |
             | German lands | country | Germany, Austria, Switzerland |
@@ -25,13 +23,14 @@ Feature: Orders management
             | customer          | address                                                |
             | klaus@example.com | Klaus Schmitt, Heine-Straße 12, 99734, Berlin, Germany |
             | lars@example.com  | Lars Meine, Fun-Straße 1, 90032, Vienna, Austria       |
-        And order #000000001 has following items:
+          And order #000000001 has following items:
             | product | quantity |
             | Mug     | 2        |
-        And order #000000002 has following items:
+          And order #000000002 has following items:
             | product | quantity |
             | Mug     | 1        |
             | Sticker | 4        |
+          And I am logged in as administrator
 
     Scenario: Seeing index of all orders
         Given I am on the dashboard page
@@ -70,9 +69,10 @@ Feature: Orders management
     Scenario: Deleting the order
         Given I am viewing order with number "000000001"
          When I press "delete"
-          And I press "delete"
+          And I click "delete" from the confirmation modal
          Then I should be on the order index page
           And I should see "Order has been successfully deleted."
+          And I should not see order with number "#000000001" in the list
 
     @javascript
     Scenario: Deleting the order via list
@@ -81,14 +81,6 @@ Feature: Orders management
           And I click "delete" from the confirmation modal
          Then I should be on the order index page
           And I should see "Order has been successfully deleted."
-
-    @javascript
-    Scenario: Deleted order disappears from the list
-        Given I am viewing order with number "000000002"
-         When I press "delete"
-          And I click "delete" from the confirmation modal
-         Then I should be on the order index page
-          And I should not see order with number "#000000002" in the list
 
     Scenario: Order integrity is preserved after deleting a product
         Given I have deleted the product "Mug"

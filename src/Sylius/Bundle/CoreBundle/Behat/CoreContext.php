@@ -12,10 +12,10 @@
 namespace Sylius\Bundle\CoreBundle\Behat;
 
 use Behat\Gherkin\Node\TableNode;
-use Sylius\Component\Rbac\Model\RoleInterface;
 use Sylius\Bundle\ResourceBundle\Behat\DefaultContext;
 use Sylius\Component\Addressing\Model\AddressInterface;
 use Sylius\Component\Cart\SyliusCartEvents;
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\OrderItemInterface;
@@ -27,8 +27,11 @@ use Sylius\Component\Core\Model\ShippingMethodInterface;
 use Sylius\Component\Core\Model\TaxRateInterface;
 use Sylius\Component\Core\Model\UserInterface;
 use Sylius\Component\Core\Pricing\Calculators as PriceCalculators;
+use Sylius\Component\Currency\Model\CurrencyInterface;
+use Sylius\Component\Locale\Model\LocaleInterface;
 use Sylius\Component\Order\OrderTransitions;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
+use Sylius\Component\Rbac\Model\RoleInterface;
 use Sylius\Component\Shipping\Calculator\DefaultCalculators;
 use Sylius\Component\Shipping\ShipmentTransitions;
 use Sylius\Component\User\Model\GroupableInterface;
@@ -42,6 +45,36 @@ class CoreContext extends DefaultContext
      * @var OrderInterface[]
      */
     protected $orders = array();
+
+    /**
+     * @Given store has default configuration
+     */
+    public function storeHasDefaultConfiguration()
+    {
+        $manager = $this->getEntityManager();
+
+        /** @var CurrencyInterface $currency */
+        $currency = $this->getRepository('currency')->createNew();
+        $currency->setCode('EUR');
+        $currency->setExchangeRate(1);
+        $manager->persist($currency);
+
+        /** @var LocaleInterface $locale */
+        $locale = $this->getRepository('locale')->createNew();
+        $locale->setCode('en_US');
+        $manager->persist($locale);
+
+        /* @var ChannelInterface $channel */
+        $channel = $this->getRepository('channel')->createNew();
+        $channel->setCode('DEFAULT-WEB');
+        $channel->setName('Default');
+        $channel->setUrl('http://example.com');
+        $channel->addCurrency($currency);
+        $channel->addLocale($locale);
+        $manager->persist($channel);
+
+        $manager->flush();
+    }
 
     /**
      * @Given I am logged in as :role
@@ -65,7 +98,7 @@ class CoreContext extends DefaultContext
      */
     public function iAmNotLoggedIn()
     {
-        $this->getSession()->visit($this->generatePageUrl('sylius_user_security_logout'));
+        $this->getSession()->restart();
     }
 
     /**
@@ -232,8 +265,10 @@ class CoreContext extends DefaultContext
 
         foreach ($table->getHash() as $data) {
             $address = $this->createAddress($data['address']);
-            $user = $this->thereIsUser($data['user'], 'sylius', 'ROLE_USER', 'yes', null, array(), false);
+
+            $user = $this->thereIsUser($data['user'], 'sylius', 'ROLE_USER', 'yes', null, array());
             $user->getCustomer()->addAddress($address);
+
             $manager->persist($address);
             $manager->persist($user);
         }
@@ -428,9 +463,24 @@ class CoreContext extends DefaultContext
         $repository = $this->getRepository('locale');
         $manager = $this->getEntityManager();
 
+        $locales = $repository->findAll();
+        foreach ($locales as $locale) {
+            $manager->remove($locale);
+        }
+
+        $manager->flush();
+        $manager->clear();
+
         foreach ($table->getHash() as $data) {
             $locale = $repository->createNew();
-            $locale->setCode($data['code']);
+
+            if (isset($data['code'])) {
+                $locale->setCode($data['code']);
+            } elseif (isset($data['name'])) {
+                $locale->setCode($this->getLocaleCodeByEnglishLocaleName($data['name']));
+            } else {
+                throw new \InvalidArgumentException("Locale definition should have either code or name");
+            }
 
             if (isset($data['enabled'])) {
                 $locale->setEnabled('yes' === $data['enabled']);
@@ -443,22 +493,51 @@ class CoreContext extends DefaultContext
     }
 
     /**
+     * @Given /^there are following locales configured and assigned to the default channel:$/
+     */
+    public function thereAreLocalesAssignedToDefaultChannel(TableNode $table)
+    {
+        $this->thereAreLocales($table);
+
+        /** @var ChannelInterface $defaultChannel */
+        $defaultChannel = $this->getRepository('channel')->findOneBy(array('code' => 'DEFAULT-WEB'));
+
+        /** @var LocaleInterface[] $locales */
+        $locales = $this->getRepository('locale')->findAll();
+        foreach ($locales as $locale) {
+            $defaultChannel->addLocale($locale);
+        }
+
+        $this->getEntityManager()->flush();
+    }
+
+    /**
      * @Given /^product "([^""]*)" is available in all variations$/
      */
     public function productIsAvailableInAllVariations($productName)
     {
+        /** @var ProductInterface $product */
         $product = $this->findOneByName('product', $productName);
 
-        $this->getService('sylius.generator.product_variant')->generate($product);
+        $this->generateProductVariations($product);
 
-        /* @var $variant ProductVariantInterface */
-        foreach ($product->getVariants() as $variant) {
-            $variant->setPrice($product->getMasterVariant()->getPrice());
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @Given all products are available in all variations
+     */
+    public function allProductsAreAvailableInAllVariations()
+    {
+        /** @var ProductInterface[] $products */
+        $products = $this->getRepository('product')->findAll();
+        foreach ($products as $product) {
+            if ($product->hasOptions()) {
+                $this->generateProductVariations($product);
+            }
         }
 
-        $manager = $this->getEntityManager();
-        $manager->persist($product);
-        $manager->flush();
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -481,7 +560,9 @@ class CoreContext extends DefaultContext
         $address->setStreet($addressData[1]);
         $address->setPostcode($addressData[2]);
         $address->setCity($addressData[3]);
-        $address->setCountry($this->findOneByName('country', $addressData[4]));
+        $address->setCountry($this->findOneBy('country', array(
+            'isoName' => $this->getCountryCodeByEnglishCountryName($addressData[4])
+        )));
 
         return $address;
     }
@@ -667,5 +748,19 @@ class CoreContext extends DefaultContext
         $authorizationRole->setSecurityRoles(array('ROLE_ADMINISTRATION_ACCESS'));
 
         return $authorizationRole;
+    }
+
+    /**
+     * @param ProductInterface $product
+     */
+    private function generateProductVariations($product)
+    {
+        $this->getService('sylius.generator.product_variant')->generate($product);
+
+        foreach ($product->getVariants() as $variant) {
+            $variant->setPrice($product->getMasterVariant()->getPrice());
+        }
+
+        $this->getEntityManager()->persist($product);
     }
 }

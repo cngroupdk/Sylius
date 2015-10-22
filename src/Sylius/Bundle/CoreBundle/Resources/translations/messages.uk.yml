@@ -25,6 +25,11 @@ sylius:
     group:
       name: Ім’я
       roles: Ролі
+    channel:
+      taxonomies: Категоризація
+      locales: Локалі
+      shipping_methods: Методи доставки
+      payment_methods: Способи оплати
     image:
       file: Зображення
     locale:
@@ -64,6 +69,10 @@ sylius:
       created_at_to: До
       number: Номер замовлення
       shipping_address: "Ім'я одержувача"
+    payment_filter:
+      created_at_from: Від
+      created_at_to: До
+      number: Номер замовлення
     shipping_method:
       zone: Зона
     taxon:
@@ -76,6 +85,7 @@ sylius:
       enabled: Ввімкнено
       first_name: Iм’я
       groups: Групи
+      roles: Ролі
       last_name: Прізвище
       password: Пароль
       shipping_address: Адреса доставки
@@ -86,7 +96,13 @@ sylius:
       depth: Глибина
       height: Висота
       images: Зображення
+      on_hand: Кількість на складі
       price: Ціна
       sku: Артикул
       weight: Вага
       width: Ширина
+    attribute:
+      product_attribute_value:
+        value: Значення
+    guest:
+      email: Email

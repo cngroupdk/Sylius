@@ -15,7 +15,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Sylius\Component\Product\Model\OptionInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OptionValueCollectionTypeSpec extends ObjectBehavior
 {
@@ -34,9 +34,12 @@ class OptionValueCollectionTypeSpec extends ObjectBehavior
         $this->shouldImplement('Symfony\Component\Form\FormTypeInterface');
     }
 
-    function it_builds_a_form(FormBuilderInterface $builder, OptionInterface $option)
-    {
+    function it_builds_a_form_using_option_presenation_as_label_if_possible(
+        FormBuilderInterface $builder,
+        OptionInterface $option
+    ) {
         $option->getId()->shouldBeCalled()->willReturn(3);
+        $option->getPresentation()->shouldBeCalled()->willReturn(null);
         $option->getName()->shouldBeCalled()->willReturn('option_name');
 
         $builder->add('3', 'sylius_varibale_name_option_value_choice', array(
@@ -50,13 +53,33 @@ class OptionValueCollectionTypeSpec extends ObjectBehavior
         ));
     }
 
-    function it_has_options(OptionsResolverInterface $resolver)
+    function it_builds_a_form_using_option_name_as_label_if_presentation_is_empty(
+        FormBuilderInterface $builder,
+        OptionInterface $option
+    ) {
+        $option->getId()->shouldBeCalled()->willReturn(3);
+        $option->getPresentation()->shouldBeCalled()->willReturn('option_presentation');
+        $option->getName()->shouldNotBeCalled();
+
+
+        $builder->add('3', 'sylius_varibale_name_option_value_choice', array(
+            'label'         => 'option_presentation',
+            'option'        => $option,
+            'property_path' => '[0]'
+        ))->shouldBeCalled();
+
+        $this->buildForm($builder, array(
+            'options' => array($option)
+        ));
+    }
+
+    function it_has_options(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'options' => null
         ))->shouldBeCalled();
 
-        $this->setDefaultOptions($resolver);
+        $this->configureOptions($resolver);
     }
 
     function it_has_a_name()

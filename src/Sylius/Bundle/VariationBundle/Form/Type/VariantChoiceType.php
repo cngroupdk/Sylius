@@ -12,21 +12,26 @@
 namespace Sylius\Bundle\VariationBundle\Form\Type;
 
 use Sylius\Bundle\VariationBundle\Form\ChoiceList\VariantChoiceList;
+use Sylius\Component\Variation\Model\VariableInterface;
 use Symfony\Bridge\Doctrine\Form\DataTransformer\CollectionToArrayTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Variant choice form type.
- *
  * @author Paweł Jędrzejewski <pawel@sylius.org>
  */
 class VariantChoiceType extends AbstractType
 {
+    /**
+     * @var string
+     */
     protected $variableName;
 
+    /**
+     * @param string $variableName
+     */
     public function __construct($variableName)
     {
         $this->variableName = $variableName;
@@ -45,7 +50,7 @@ class VariantChoiceType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $choiceList = function (Options $options) {
             return new VariantChoiceList($options['variable']);
@@ -60,9 +65,7 @@ class VariantChoiceType extends AbstractType
             ->setRequired(array(
                 'variable',
             ))
-            ->setAllowedTypes(array(
-                'variable' => array('Sylius\Component\Variation\Model\VariableInterface'),
-            ))
+            ->setAllowedTypes('variable', VariableInterface::class)
         ;
     }
 

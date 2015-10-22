@@ -11,8 +11,8 @@
 
 namespace Sylius\Component\Report\Renderer;
 
-use Sylius\Component\Report\Model\ReportInterface;
 use Sylius\Component\Report\DataFetcher\Data;
+use Sylius\Component\Report\Model\ReportInterface;
 
 /**
  * @author Mateusz Zalewski <zaleslaw@.gmail.com>
@@ -20,7 +20,6 @@ use Sylius\Component\Report\DataFetcher\Data;
 interface DelegatingRendererInterface
 {
     /**
-     *
      * @param ReportInterface $subject
      * @param Data            $data
      *

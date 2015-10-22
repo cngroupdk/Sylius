@@ -22,10 +22,10 @@ use Symfony\Component\HttpKernel\Kernel as BaseKernel;
  */
 abstract class Kernel extends BaseKernel
 {
-    const VERSION         = '0.15.0-dev';
-    const VERSION_ID      = '00150';
+    const VERSION         = '0.16.0-dev';
+    const VERSION_ID      = '00160';
     const MAJOR_VERSION   = '0';
-    const MINOR_VERSION   = '15';
+    const MINOR_VERSION   = '16';
     const RELEASE_VERSION = '0';
     const EXTRA_VERSION   = 'DEV';
 
@@ -73,8 +73,8 @@ abstract class Kernel extends BaseKernel
 
             new \Sylius\Bundle\CoreBundle\SyliusCoreBundle(),
             new \Sylius\Bundle\WebBundle\SyliusWebBundle(),
-            new \winzou\Bundle\StateMachineBundle\winzouStateMachineBundle(),
             new \Sylius\Bundle\ResourceBundle\SyliusResourceBundle(),
+            new \winzou\Bundle\StateMachineBundle\winzouStateMachineBundle(),
             new \Sylius\Bundle\ApiBundle\SyliusApiBundle(),
 
             new \Sonata\BlockBundle\SonataBlockBundle(),

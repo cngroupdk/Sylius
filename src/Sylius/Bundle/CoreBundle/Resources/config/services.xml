@@ -55,6 +55,7 @@
         <parameter key="sylius.listener.checkout_addressing.class">Sylius\Bundle\CoreBundle\EventListener\CheckoutAddressingListener</parameter>
         <parameter key="sylius.listener.insufficient_stock_exception.class">Sylius\Bundle\CoreBundle\EventListener\InsufficientStockExceptionListener</parameter>
         <parameter key="sylius.listener.image_upload.class">Sylius\Bundle\CoreBundle\EventListener\ImageUploadListener</parameter>
+        <parameter key="sylius.listener.channel.class">Sylius\Bundle\CoreBundle\EventListener\ChannelDeletionListener</parameter>
 
         <parameter key="sylius.promotion_processor.class">Sylius\Bundle\CoreBundle\OrderProcessing\PromotionProcessor</parameter>
         <parameter key="sylius.promotion_rule_checker.nth_order.class">Sylius\Component\Core\Promotion\Checker\NthOrderRuleChecker</parameter>
@@ -84,16 +85,16 @@
         <parameter key="sylius.dynamic_router.class">Symfony\Cmf\Component\Routing\DynamicRouter</parameter>
         <parameter key="sylius.generator.class">Sylius\Bundle\CoreBundle\Routing\SyliusAwareGenerator</parameter>
         <parameter key="sylius.route_provider.class">Sylius\Bundle\CoreBundle\Routing\RouteProvider</parameter>
+        <parameter key="sylius.a2lix_locale_provider.class">Sylius\Bundle\CoreBundle\Locale\A2lixTranslationLocaleProvider</parameter>
+
+        <parameter key="sylius.validator.has_enabled_entity.class">Sylius\Bundle\CoreBundle\Validator\Constraints\HasEnabledEntityValidator</parameter>
 
         <parameter key="sylius.callback.complete_order.class">Sylius\Bundle\CoreBundle\StateMachineCallback\CompleteOrderCallback</parameter>
 
         <!-- Data fetchers -->
-        <parameter key="sylius.registry.report.class">Sylius\Component\Registry\ServiceRegistry</parameter>
         <parameter key="sylius.form.type.data_fetcher.number_of_orders.class">Sylius\Bundle\CoreBundle\Form\Type\DataFetcher\NumberOfOrdersType</parameter>
         <parameter key="sylius.form.type.data_fetcher.sales_total.class">Sylius\Bundle\CoreBundle\Form\Type\DataFetcher\SalesTotalType</parameter>
         <parameter key="sylius.form.type.data_fetcher.user_registration.class">Sylius\Bundle\CoreBundle\Form\Type\DataFetcher\UserRegistrationType</parameter>
-        <parameter key="sylius.form.type.data_fetcher_choice.class">Sylius\Bundle\CoreBundle\Form\Type\DataFetcher\DataFetcherChoiceType</parameter>
-        <parameter key="sylius.report.data_fetcher.class">Sylius\Component\Report\DataFetcher\DelegatingDataFetcher</parameter>
 
         <parameter key="sylius.authorization_checker.toggleable.class">Sylius\Bundle\CoreBundle\Authorization\ToggleableAuthorizationChecker</parameter>
         <parameter key="sylius.translation.locale_provider.contextual.class">Sylius\Bundle\CoreBundle\Locale\TranslationLocaleProvider</parameter>
@@ -334,6 +335,10 @@
             <argument>sylius_cart_summary</argument>
             <tag name="kernel.event_listener" event="kernel.exception" method="onKernelException" />
         </service>
+        <service id="sylius.listener.channel" class="%sylius.listener.channel.class%">
+            <argument type="service" id="sylius.repository.channel" />
+            <tag name="kernel.event_listener" event="sylius.channel.pre_delete" method="onChannelPreDelete" />
+        </service>
         <service id="sylius.listener.image_upload" class="%sylius.listener.image_upload.class%">
             <argument type="service" id="sylius.image_uploader" />
             <tag name="kernel.event_listener" event="sylius.product.pre_create" method="uploadProductImage" />
@@ -408,6 +413,7 @@
         </service>
 
         <service id="sylius.price_calculator.channel_based" class="%sylius.price_calculator.channel_based.class%">
+            <argument type="service" id="sylius.context.channel" />
             <tag name="sylius.price_calculator" type="channel_based" label="Channel based" />
         </service>
 
@@ -483,6 +489,11 @@
             <argument>%sylius.route_classes%</argument>
             <call method="setRouteCollectionLimit"><argument>%sylius.route_collection_limit%</argument></call>
         </service>
+        <service id="sylius.a2lix_locale_provider" class="%sylius.a2lix_locale_provider.class%">
+            <argument type="service" id="sylius.locale_provider" />
+            <argument type="service" id="sylius.context.locale" />
+        </service>
+
 
         <service id="sylius.enhancer.controllers_by_class" class="%cmf_routing.enhancer.field_by_class.class%">
             <argument>_sylius_entity</argument>
@@ -496,17 +507,6 @@
         </service>
 
         <!-- Data fetchers -->
-        <service id="sylius.registry.report.data_fetcher" class="%sylius.registry.report.class%">
-            <argument>Sylius\Component\Report\DataFetcher\DataFetcherInterface</argument>
-        </service>
-        <service id="sylius.report.data_fetcher" class="%sylius.report.data_fetcher.class%">
-            <argument type="service" id="sylius.registry.report.data_fetcher" />
-        </service>
-        <service id="sylius.form.type.data_fetcher_choice" class="%sylius.form.type.data_fetcher_choice.class%">
-            <argument>%sylius.report.data_fetchers%</argument>
-            <tag name="form.type" alias="sylius_data_fetcher_choice" />
-        </service>
-
         <service id="sylius.form.type.data_fetcher.user_registration" class="%sylius.form.type.data_fetcher.user_registration.class%">
             <tag name="form.type" alias="sylius_data_fetcher_user_registration" />
         </service>
@@ -526,6 +526,11 @@
 
         <service id="sylius.translation.locale_provider.contextual" class="%sylius.translation.locale_provider.contextual.class%">
             <argument type="service" id="sylius.context.locale" />
+        </service>
+
+        <service id="sylius.validator.has_enabled_entity" class="%sylius.validator.has_enabled_entity.class%">
+            <argument type="service" id="doctrine" />
+            <tag name="validator.constraint_validator" alias="sylius_has_enabled_entity" />
         </service>
     </services>
 

@@ -5,11 +5,10 @@ Feature: Forgot password
     I need to be able to reset my password
 
     Background:
-        Given there are following users:
+        Given store has default configuration
+          And there are following users:
             | email       | password | enabled |
             | bar@foo.com | foo1     | yes     |
-        And there is default currency configured
-        And there is default channel configured
 
     Scenario: Reseting user password
         Given I am on the store homepage
@@ -17,8 +16,8 @@ Feature: Forgot password
           And I follow "Forgot password"
          When I fill in "Email" with "bar@foo.com"
           And I press "Reset"
-         Then I should be on the store homepage
-          And I should see "Your password has been reset successfully!"
+         Then I should be redirected to user login page
+          And I should see "We send you an email with instructions to reset your password!"
 
     Scenario: Trying to reset password without email
         Given I am on the sylius user request password reset token page

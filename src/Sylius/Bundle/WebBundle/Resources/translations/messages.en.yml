@@ -345,6 +345,7 @@ sylius:
         no_results: There are no countries configured.
         show_header: Country details
         update_header: Editing country
+        enabled: Enabled
     email:
         create: Add new Email
         create_header: Adding new Email
@@ -461,6 +462,8 @@ sylius:
         sku: SKU
         updated_at: Last update
     locale:
+        id: ID
+        name: Name
         code: Code
         create: Create locale
         create_header: Adding new locale
@@ -662,9 +665,11 @@ sylius:
         id: ID
         index_header: Pages
         no_results: There are no pages to display.
+        no_route: Your content will not appear in frontend if no route is defined
         publishable: Published
         start_date: Start Date
         end_date: End date
+        routes: Routes
         title: Title
         update_header: Editing page
     password: Password
@@ -958,7 +963,7 @@ sylius:
         billing_address: Billing address
         create: create customer
         create_header: New customer
-        email: E-Mail
+        email: Email
         filter:
             all: Show all customers
             registered: Show registered customers
@@ -1059,3 +1064,7 @@ sylius:
     gender:
         male: Male
         female: Female
+    enable: Enable
+    disable: Disable
+    ui:
+        links: Links

@@ -13,7 +13,7 @@ namespace Sylius\Bundle\ContentBundle\Form\Type;
 
 use Sylius\Bundle\ResourceBundle\Form\Type\AbstractResourceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Menu block type.
@@ -47,6 +47,7 @@ class MenuType extends AbstractResourceType
                 'by_reference'     => false,
                 'label'            => false,
                 'button_add_label' => 'sylius.form.menu.add_menu_node',
+                'cascade_validation' => true,
              ))
             ->add('uri', null, array(
                 'required' => false,
@@ -84,13 +85,13 @@ class MenuType extends AbstractResourceType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'cascade_validation' => true,
         ));
 
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
     }
 
     /**

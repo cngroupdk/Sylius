@@ -25,6 +25,11 @@ sylius:
     group:
       name: Naam
       roles: Rollen
+    channel:
+      taxonomies: Taxonomieën
+      locales: "Talen/Regio's"
+      shipping_methods: Verzendmethodes
+      payment_methods: Betaalmethodes
     image:
       file: Afbeelding
     locale:
@@ -36,7 +41,7 @@ sylius:
       number: Nummer
       total_from: Van
       total_to: Tot
-      payment_state: Betaal status
+      payment_state: Betaalstatus
     page:
       body: Inhoud
       id: ID
@@ -64,6 +69,10 @@ sylius:
       created_at_to: Tot
       number: Ordernummer
       shipping_address: Verzend naar naam
+    payment_filter:
+      created_at_from: Van
+      created_at_to: Tot
+      number: Ordernummer
     shipping_method:
       zone: Zone
     taxon:
@@ -76,6 +85,7 @@ sylius:
       enabled: Actief
       first_name: Voornaam
       groups: Groepen
+      roles: Rollen
       last_name: Achternaam
       password: Wachtwoord
       shipping_address: Bezorgadres
@@ -91,3 +101,8 @@ sylius:
       sku: SKU
       weight: Gewicht
       width: Breedte
+    attribute:
+      product_attribute_value:
+        value: Waarde
+    guest:
+      email: E-mail

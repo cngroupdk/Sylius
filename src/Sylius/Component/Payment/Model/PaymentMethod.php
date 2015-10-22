@@ -12,59 +12,44 @@
 namespace Sylius\Component\Payment\Model;
 
 use Sylius\Component\Payment\Calculator\DefaultFeeCalculators;
+use Sylius\Component\Translation\Model\AbstractTranslatable;
 
 /**
- * Payments method model.
- *
  * @author Paweł Jędrzejewski <pawel@sylius.org>
  */
-class PaymentMethod implements PaymentMethodInterface
+class PaymentMethod extends AbstractTranslatable implements PaymentMethodInterface
 {
     /**
-     * Payments method identifier.
-     *
      * @var mixed
      */
     protected $id;
 
     /**
-     * Is method enabled?
-     *
      * @var Boolean
      */
     protected $enabled = true;
 
     /**
-     * Name.
-     *
      * @var string
      */
     protected $name;
 
     /**
-     * Description.
-     *
      * @var string
      */
     protected $description;
 
     /**
-     * Gateway name.
-     *
      * @var string
      */
     protected $gateway;
 
     /**
-     * Required environment.
-     *
      * @var string
      */
     protected $environment;
 
     /**
-     * FeeCalculator name
-     *
      * @var string
      */
     protected $feeCalculator = DefaultFeeCalculators::FIXED;
@@ -75,24 +60,19 @@ class PaymentMethod implements PaymentMethodInterface
     protected $feeCalculatorConfiguration = array();
 
     /**
-     * Creation date.
-     *
      * @var \DateTime
      */
     protected $createdAt;
 
     /**
-     * Last update time.
-     *
      * @var \DateTime
      */
     protected $updatedAt;
 
-    /**
-     * Constructor.
-     */
     public function __construct()
     {
+        parent::__construct();
+
         $this->createdAt = new \DateTime();
     }
 
@@ -101,7 +81,7 @@ class PaymentMethod implements PaymentMethodInterface
      */
     public function __toString()
     {
-        return $this->name;
+        return $this->translate()->__toString();
     }
 
     /**
@@ -125,7 +105,7 @@ class PaymentMethod implements PaymentMethodInterface
      */
     public function setEnabled($enabled)
     {
-        $this->enabled = (Boolean) $enabled;
+        $this->enabled = (Boolean)$enabled;
     }
 
     /**
@@ -133,7 +113,7 @@ class PaymentMethod implements PaymentMethodInterface
      */
     public function getName()
     {
-        return $this->name;
+        return $this->translate()->getName();
     }
 
     /**
@@ -141,7 +121,9 @@ class PaymentMethod implements PaymentMethodInterface
      */
     public function setName($name)
     {
-        $this->name = $name;
+        $this->translate()->setName($name);
+
+        return $this;
     }
 
     /**
@@ -149,7 +131,7 @@ class PaymentMethod implements PaymentMethodInterface
      */
     public function getDescription()
     {
-        return $this->description;
+        return $this->translate()->getDescription();
     }
 
     /**
@@ -157,7 +139,9 @@ class PaymentMethod implements PaymentMethodInterface
      */
     public function setDescription($description)
     {
-        $this->description = $description;
+        $this->translate()->setDescription($description);
+
+        return $this;
     }
 
     /**

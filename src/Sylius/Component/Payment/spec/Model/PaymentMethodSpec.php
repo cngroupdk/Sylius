@@ -12,13 +12,18 @@
 namespace spec\Sylius\Component\Payment\Model;
 
 use PhpSpec\ObjectBehavior;
-use Sylius\Component\Payment\Calculator\FeeCalculatorInterface;
 
 /**
  * @author Paweł Jędrzejewski <pawel@sylius.org>
  */
 class PaymentMethodSpec extends ObjectBehavior
 {
+    public function let()
+    {
+        $this->setCurrentLocale('en_US');
+        $this->setFallbackLocale('en_US');
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType('Sylius\Component\Payment\Model\PaymentMethod');

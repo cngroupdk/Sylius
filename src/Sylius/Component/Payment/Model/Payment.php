@@ -14,67 +14,54 @@ namespace Sylius\Component\Payment\Model;
 use Sylius\Component\Resource\Exception\UnexpectedTypeException;
 
 /**
- * Payments model.
- *
  * @author Paweł Jędrzejewski <pawel@sylius.org>
  */
 class Payment implements PaymentInterface, PaymentSubjectInterface
 {
     /**
-     * Payments method identifier.
-     *
      * @var mixed
      */
     protected $id;
 
     /**
-     * Method.
-     *
      * @var PaymentMethodInterface
      */
     protected $method;
 
     /**
-     * Currency.
-     *
      * @var string
      */
     protected $currency;
 
     /**
-     * Amount.
-     *
      * @var integer
      */
     protected $amount = 0;
 
     /**
-     * State.
-     *
      * @var string
      */
     protected $state = PaymentInterface::STATE_NEW;
 
     /**
-     * Credit card as a source.
-     *
      * @var CreditCardInterface
      */
     protected $creditCard;
 
     /**
-     * Creation date.
-     *
      * @var \DateTime
      */
     protected $createdAt;
 
     /**
-     * Last update time.
-     *
      * @var \DateTime
      */
     protected $updatedAt;
+
+    /**
+     * @var \DateTime
+     */
+    protected $deletedAt;
 
     /**
      * @var array
@@ -111,8 +98,6 @@ class Payment implements PaymentInterface, PaymentSubjectInterface
     public function setMethod(PaymentMethodInterface $method = null)
     {
         $this->method = $method;
-
-        return $this;
     }
 
     /**
@@ -127,8 +112,6 @@ class Payment implements PaymentInterface, PaymentSubjectInterface
         if ($source instanceof CreditCardInterface) {
             $this->creditCard = $source;
         }
-
-        return $this;
     }
 
     /**
@@ -157,8 +140,6 @@ class Payment implements PaymentInterface, PaymentSubjectInterface
     public function setCurrency($currency)
     {
         $this->currency = $currency;
-
-        return $this;
     }
 
     /**
@@ -178,8 +159,6 @@ class Payment implements PaymentInterface, PaymentSubjectInterface
             throw new \InvalidArgumentException('Amount must be an integer.');
         }
         $this->amount = $amount;
-
-        return $this;
     }
 
     /**
@@ -196,8 +175,6 @@ class Payment implements PaymentInterface, PaymentSubjectInterface
     public function setState($state)
     {
         $this->state = $state;
-
-        return $this;
     }
 
     /**
@@ -214,8 +191,6 @@ class Payment implements PaymentInterface, PaymentSubjectInterface
     public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
-
-        return $this;
     }
 
     /**
@@ -232,8 +207,30 @@ class Payment implements PaymentInterface, PaymentSubjectInterface
     public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt;
+    }
 
-        return $this;
+    /**
+     * {@inheritdoc}
+     */
+    public function isDeleted()
+    {
+        return null !== $this->deletedAt && new \DateTime() >= $this->deletedAt;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeletedAt()
+    {
+        return $this->deletedAt;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeletedAt(\DateTime $deletedAt = null)
+    {
+        $this->deletedAt = $deletedAt;
     }
 
     /**
@@ -250,8 +247,6 @@ class Payment implements PaymentInterface, PaymentSubjectInterface
         }
 
         $this->details = $details;
-
-        return $this;
     }
 
     /**

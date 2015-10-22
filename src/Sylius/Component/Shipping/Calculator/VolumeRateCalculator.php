@@ -15,8 +15,6 @@ use Sylius\Component\Shipping\Model\ShippingSubjectInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Per weight amount rate calculator.
- *
  * @author Antonio Peric <antonio@locastic.com>
  */
 class VolumeRateCalculator extends Calculator
@@ -58,10 +56,8 @@ class VolumeRateCalculator extends Calculator
                 'amount',
                 'division'
             ))
-            ->setAllowedTypes(array(
-                'amount'   => array('numeric'),
-                'division' => array('numeric')
-            ))
+            ->setAllowedTypes('amount', 'numeric')
+            ->setAllowedTypes('division', 'numeric')
         ;
     }
 }

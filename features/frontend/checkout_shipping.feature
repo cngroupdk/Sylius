@@ -5,7 +5,8 @@ Feature: Checkout shipping
     I want to be able to use checkout shipping step
 
     Background:
-        Given there are following taxonomies defined:
+        Given store has default configuration
+          And there are following taxonomies defined:
             | name     |
             | Category |
           And taxonomy "Category" has following taxons:
@@ -16,10 +17,10 @@ Feature: Checkout shipping
           And the following zones are defined:
             | name         | type    | members                 |
             | UK + Germany | country | United Kingdom, Germany |
-            | USA          | country | USA                     |
+            | USA          | country | United States           |
           And there are following countries:
             | name           |
-            | USA            |
+            | United States  |
             | United Kingdom |
             | Poland         |
             | Germany        |
@@ -32,10 +33,8 @@ Feature: Checkout shipping
           And the following payment methods exist:
             | name  | gateway | enabled | calculator | calculator_configuration |
             | Dummy | dummy   | yes     | fixed      | amount: 0                |
-          And there is default currency configured
-          And there is default channel configured
-          And all products assigned to "DEFAULT-WEB" channel
-          And channel "DEFAULT-WEB" has following configuration:
+          And all products are assigned to the default channel
+          And the default channel has following configuration:
             | taxonomy | payment | shipping                                      |
             | Category | Dummy   | DHL Express, FedEx, FedEx Premium, UPS Ground |
           And I am logged in user
@@ -61,7 +60,7 @@ Feature: Checkout shipping
 
     Scenario: Listing methods for another zone
         Given I go to the checkout start page
-          And I fill in the shipping address to USA
+          And I fill in the shipping address to United States
          When I press "Continue"
          Then I should be on the checkout shipping step
           And I should not see "DHL Express"
@@ -70,7 +69,7 @@ Feature: Checkout shipping
 
     Scenario: Selecting one of shipping methods
         Given I go to the checkout start page
-          And I fill in the shipping address to USA
+          And I fill in the shipping address to United States
           And I press "Continue"
          When I select the "FedEx" radio button
           And I press "Continue"
@@ -78,14 +77,14 @@ Feature: Checkout shipping
 
     Scenario: Trying to continue without selecting any method
         Given I go to the checkout start page
-          And I fill in the shipping address to USA
+          And I fill in the shipping address to United States
           And I press "Continue"
          When I press "Continue"
          Then I should see "Please select shipping method."
 
     Scenario: Shipping costs affect the order total
         Given I go to the checkout start page
-          And I fill in the shipping address to USA
+          And I fill in the shipping address to United States
           And I press "Continue"
           And I select the "FedEx" radio button
           And I press "Continue"
@@ -101,3 +100,12 @@ Feature: Checkout shipping
          When I press "Continue"
          Then I should be on the checkout addressing step
           And "We're sorry" should appear on the page
+
+    Scenario: Returning to shipping method page
+        Given I go to the checkout start page
+          And I fill in the shipping address to United States
+          And I press "Continue"
+         When I select the "FedEx" radio button
+          And I press "Continue"
+          And I click "Back"
+         Then I should see "FedEx"

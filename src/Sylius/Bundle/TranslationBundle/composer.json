@@ -20,18 +20,19 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.5.9",
 
         "symfony/framework-bundle":        "~2.3",
         "stof/doctrine-extensions-bundle": "~1.1",
-        "sylius/resource-bundle":          "0.15.*@dev",
-        "sylius/translation":              "0.15.*@dev"
+        "sylius/resource-bundle":          "0.16.*",
+        "sylius/translation":              "0.16.*"
     },
     "require-dev": {
         "phpspec/phpspec":   "~2.1",
         "doctrine/orm":      "~2.2",
         "symfony/form":      "~2.3",
-        "symfony/validator": "~2.3"
+        "symfony/validator": "~2.3",
+        "akeneo/phpspec-skip-example-extension": "~1.2"
     },
     "config": {
         "bin-dir": "bin"
@@ -42,9 +43,10 @@
     "autoload-dev": {
         "psr-4": { "Sylius\\Bundle\\TranslationBundle\\spec\\": "spec/" }
     },
+    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.15-dev"
+            "dev-master": "0.16-dev"
         }
     }
 }

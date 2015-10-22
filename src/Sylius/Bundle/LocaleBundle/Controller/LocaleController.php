@@ -11,16 +11,14 @@
 
 namespace Sylius\Bundle\LocaleBundle\Controller;
 
+use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
+use Sylius\Component\Locale\Context\LocaleContextInterface;
+use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sylius\Component\Locale\Provider\LocaleProviderInterface;
-use Sylius\Component\Locale\Context\LocaleContextInterface;
-use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 
 /**
- * Locale controller.
- *
  * @author Paweł Jędrzejewski <pawel@sylius.org>
  */
 class LocaleController extends ResourceController
@@ -38,7 +36,7 @@ class LocaleController extends ResourceController
             $locale = $this->getLocaleContext()->getDefaultLocale();
         }
 
-        $this->getLocaleContext()->setLocale($locale);
+        $this->getLocaleContext()->setCurrentLocale($locale);
 
         if ($this->config->isApiRequest()) {
             $view = $this

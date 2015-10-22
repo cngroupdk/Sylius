@@ -11,12 +11,7 @@
 
 namespace Sylius\Component\Variation\Model;
 
-use Doctrine\Common\Collections\Collection;
-use Sylius\Component\Resource\Model\TimestampableInterface;
-
 /**
- * Object option translation interface.
- *
  * @author Gonzalo Vilaseca <gvilaseca@reiss.co.uk>
  */
 interface OptionTranslationInterface

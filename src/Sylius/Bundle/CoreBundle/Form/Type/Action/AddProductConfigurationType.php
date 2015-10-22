@@ -14,17 +14,18 @@ namespace Sylius\Bundle\CoreBundle\Form\Type\Action;
 use Sylius\Component\Core\Repository\ProductVariantRepositoryInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 
 /**
- * Free product configuration form.
- *
  * @author Alexandre Bacco <alexandre.bacco@gmail.com>
  */
 class AddProductConfigurationType extends AbstractType
 {
+    /**
+     * @var string[]
+     */
     protected $validationGroups;
 
     /**
@@ -43,14 +44,12 @@ class AddProductConfigurationType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $variantRepository = $this->variantRepository;
-
         $builder
             ->add('variant', 'sylius_entity_to_identifier', array(
                 'label'         => 'sylius.form.action.add_product_configuration.variant',
                 'class'         => $this->variantRepository->getClassName(),
-                'query_builder' => function () use ($variantRepository) {
-                    return $variantRepository->getFormQueryBuilder();
+                'query_builder' => function () {
+                    return $this->variantRepository->getFormQueryBuilder();
                 },
                 'constraints'   => array(
                     new NotBlank(),
@@ -76,7 +75,7 @@ class AddProductConfigurationType extends AbstractType
         ;
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
             ->setDefaults(array(

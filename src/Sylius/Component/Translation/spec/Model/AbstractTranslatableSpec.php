@@ -3,9 +3,9 @@
 namespace spec\Sylius\Component\Translation\Model;
 
 use PhpSpec\ObjectBehavior;
-use Sylius\Component\Translation\Model\TranslationInterface;
 use Sylius\Component\Translation\Model\AbstractTranslatable;
 use Sylius\Component\Translation\Model\AbstractTranslation;
+use Sylius\Component\Translation\Model\TranslationInterface;
 
 class AbstractTranslatableSpec extends ObjectBehavior
 {
@@ -29,21 +29,21 @@ class AbstractTranslatableSpec extends ObjectBehavior
         $translation->getLocale()->willReturn('en');
         $translation->setTranslatable($this)->shouldBeCalled();
 
-        $this->addTranslation($translation)->shouldReturn($this);
+        $this->addTranslation($translation);
         $this->hasTranslation($translation)->shouldReturn(true);
     }
 
     function it_removes_translation(TranslationInterface $translation)
     {
         $this->addTranslation($translation);
-        $this->removeTranslation($translation)->shouldReturn($this);
+        $this->removeTranslation($translation);
 
         $this->hasTranslation($translation)->shouldReturn(false);
     }
 
     function its_current_locale_is_mutable()
     {
-        $this->setCurrentLocale('en_US')->shouldReturn($this);
+        $this->setCurrentLocale('en_US');
         $this->getCurrentLocale()->shouldReturn('en_US');
     }
 

@@ -19,6 +19,12 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 abstract class AbstractInstallCommand extends ContainerAwareCommand
 {
+    const APP_CACHE                 = 'app/cache/';
+    const WEB_ASSETS_DIRECTORY      = 'web/assets/';
+    const WEB_BUNDLES_DIRECTORY     = 'web/bundles/';
+    const WEB_MEDIA_DIRECTORY       = 'web/media/';
+    const WEB_MEDIA_IMAGE_DIRECTORY = 'web/media/image/';
+
     /**
      * @var CommandExecutor
      */
@@ -228,5 +234,18 @@ abstract class AbstractInstallCommand extends ContainerAwareCommand
         }
 
         return $dialog->askHiddenResponse($output, sprintf('<question>%s</question> ', $question));
+    }
+
+    /**
+     * @param string $directory
+     * @param OutputInterface $output
+     */
+    protected function ensureDirectoryExistsAndIsWritable($directory, OutputInterface $output)
+    {
+        $checker = $this->get('sylius.installer.checker.command_directory');
+        $checker->setCommandName($this->getName());
+
+        $checker->ensureDirectoryExists($directory, $output);
+        $checker->ensureDirectoryIsWritable($directory, $output);
     }
 }

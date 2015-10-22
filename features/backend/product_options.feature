@@ -5,16 +5,12 @@ Feature: Product options
     I want to be able to manage options
 
     Background:
-        Given there is default currency configured
-        And there are following locales configured:
-            | code  | enabled |
-            | en_US | yes     |
-        And there is default channel configured
-        And I am logged in as administrator
-        And there are following options:
+        Given store has default configuration
+          And there are following options:
             | name          | presentation | values           |
             | T-Shirt color | Color        | Red, Blue, Green |
             | T-Shirt size  | Size         | S, M, L          |
+          And I am logged in as administrator
 
     Scenario: Seeing index of all options
         Given I am on the dashboard page
@@ -75,7 +71,7 @@ Feature: Product options
             | MONSTER mug |
         And I press "Create"
         Then I should be on the product option index page
-        And I should see option with value "Normal mug" in that list
+        And I should see option with value containing "Normal mug" in that list
 
     @javascript
     Scenario: Adding values to existing option
@@ -86,7 +82,7 @@ Feature: Product options
         And I press "Save changes"
         Then I should be on the product option index page
         And "Option has been successfully updated." should appear on the page
-        And I should see option with value "XXL" in the list
+        And I should see option with value containing "XXL" in the list
 
     Scenario: Created options appear in the list
         Given I created option "Hat size" with values "S, M, L"

@@ -14,26 +14,20 @@ namespace Sylius\Bundle\VariationBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList;
 use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
- * Option value choice form type.
- *
  * @author Paweł Jędrzejewski <pawel@sylius.org>
  */
 class OptionValueChoiceType extends AbstractType
 {
     /**
-     * Variable object name.
-     *
      * @var string
      */
     protected $variableName;
 
     /**
-     * Constructor.
-     *
      * @param string $variableName
      */
     public function __construct($variableName)
@@ -44,7 +38,7 @@ class OptionValueChoiceType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $choiceList = function (Options $options) {
             return new ObjectChoiceList(

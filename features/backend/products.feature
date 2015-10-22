@@ -5,52 +5,48 @@ Feature: Products
     I want to be able to manage products
 
     Background:
-        Given there is default currency configured
-        And there are following locales configured:
-            | code  | enabled |
-            | en_US | yes     |
-        And there is default channel configured
-        And I am logged in as administrator
-        And there are following options:
+        Given store has default configuration
+          And there are following options:
             | name          | presentation | values           |
             | T-Shirt color | Color        | Red, Blue, Green |
             | T-Shirt size  | Size         | S, M, L          |
-        And there are following attributes:
+          And there are following attributes:
             | name               | presentation      | type     | choices   |
             | T-Shirt fabric     | T-Shirt           | text     |           |
             | T-Shirt fare trade | Faretrade product | checkbox |           |
             | Color              | color             | choice   | red, blue |
             | Size               | size              | number   |           |
-        And the following products exist:
+          And the following products exist:
             | name          | price | options                     | attributes             |
             | Super T-Shirt | 19.99 | T-Shirt size, T-Shirt color | T-Shirt fabric: Wool   |
             | Black T-Shirt | 19.99 | T-Shirt size                | T-Shirt fabric: Cotton |
             | Mug           | 5.99  |                             |                        |
             | Sticker       | 10.00 |                             |                        |
-        And product "Super T-Shirt" is available in all variations
-        And there are following tax categories:
+          And product "Super T-Shirt" is available in all variations
+          And there are following tax categories:
             | name        |
             | Clothing    |
             | Electronics |
             | Print       |
-        And there are following taxonomies defined:
+          And there are following taxonomies defined:
             | name     |
             | Category |
             | Special  |
-        And taxonomy "Category" has following taxons:
+          And taxonomy "Category" has following taxons:
             | Clothing > T-Shirts         |
             | Clothing > Premium T-Shirts |
-        And taxonomy "Special" has following taxons:
+          And taxonomy "Special" has following taxons:
             | Featured |
             | New      |
+          And I am logged in as administrator
 
     Scenario: Seeing index of all products with simple prices
         Given I am on the dashboard page
         When I follow "Products"
         Then I should be on the product index page
         And I should see 4 products in the list
-        And I should see product with price "€5.99" in that list
-        But I should not see product with price "€19.99" in that list
+        And I should see product with retail price "€5.99" in that list
+        But I should not see product with retail price "€19.99" in that list
 
     Scenario: Seeing empty index of products
         Given there are no products
@@ -115,43 +111,13 @@ Feature: Products
             | Description | Interesting description |
             | Price       | 59.99                   |
         And go to "Attributes" tab
-        And I click "Add attribute"
+        And I click "Add"
         And I select "T-Shirt fabric" from "Attribute"
         And I fill in "Value" with "Cotton"
         And I press "Create"
         Then I should be on the page of product "Manchester United tee"
         And "Product has been successfully created." should appear on the page
         And I should see "Cotton"
-
-    @javascript
-    Scenario: Creating product with boolean attribute
-        Given I am on the product creation page
-        When I fill in the following:
-            | Name        | Manchester United tee   |
-            | Description | Interesting description |
-            | Price       | 59.99                   |
-        And go to "Attributes" tab
-        And I click "Add attribute"
-        And I select "T-Shirt fare trade" from "Attribute"
-        And I check "Value"
-        When I press "Create"
-        Then I should be on the page of product "Manchester United tee"
-        And "Product has been successfully created." should appear on the page
-
-    @javascript
-    Scenario: Creating product with attributes to choose
-        Given I am on the product creation page
-        When I fill in the following:
-            | Name        | Manchester United tee   |
-            | Description | Interesting description |
-            | Price       | 59.99                   |
-        And go to "Attributes" tab
-        And I click "Add attribute"
-        And I select "Color" from "Attribute"
-        And I select "red" from "Value"
-        When I press "Create"
-        Then I should be on the page of product "Manchester United tee"
-        And "Product has been successfully created." should appear on the page
 
     @javascript
     Scenario: Creating product with number attribute
@@ -161,7 +127,7 @@ Feature: Products
             | Description | Interesting description |
             | Price       | 59.99                   |
         And go to "Attributes" tab
-        And I click "Add attribute"
+        And I click "Add"
         And I select "Color" from "Attribute"
         And I fill in "Value" with "12"
         When I press "Create"
@@ -218,9 +184,9 @@ Feature: Products
         And I click "delete" from the confirmation modal
         Then I should be on the product index page
         And I should see "Product has been successfully deleted."
-        And I should not see product with name "Sticker" in that list
+        And I should not see product with name "Mug" in that list
 
     Scenario: Accessing the product details page from list
         Given I am on the product index page
-        When I click "details" near "Mug"
+        When I click "Mug"
         Then I should be on the page of product "Mug"

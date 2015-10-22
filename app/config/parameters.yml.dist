@@ -44,7 +44,6 @@ parameters:
     stripe.publishable_key: EDITME
     stripe.secret_key: EDITME
     stripe.test_mode: true
-    stripe.publishable_key: EDITME
 
     be2bill.identifier: EDITME
     be2bill.password: EDITME
@@ -65,3 +64,6 @@ parameters:
 
     sylius.order.allow_guest_order: false
     sylius.order.pending.duration: 3 hours
+
+    wkhtmltopdf.bin_path: /usr/bin/wkhtmltopdf
+    wkhtmltoimage.bin_path: /usr/bin/wkhtmltoimage

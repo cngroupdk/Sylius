@@ -11,39 +11,20 @@
 
 namespace Sylius\Bundle\UserBundle\Form\Type;
 
-use Sylius\Bundle\ResourceBundle\Form\Type\AbstractResourceType;
-use Sylius\Bundle\UserBundle\Form\EventListener\CustomerRegistrationFormListener;
-use Sylius\Bundle\UserBundle\Form\EventListener\UserRegistrationFormListener;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * @author Michał Marcinkowski <michal.marcinkowski@lakion.com>
  */
-class CustomerRegistrationType extends AbstractResourceType
+class CustomerRegistrationType extends CustomerSimpleRegistrationType
 {
-    /**
-     * @var RepositoryInterface
-     */
-    private $customerRepository;
-
-    /**
-     * @param string              $dataClass
-     * @param array               $validationGroups
-     * @param RepositoryInterface $customerRepository
-     */
-    public function __construct($dataClass, array $validationGroups = array(), RepositoryInterface $customerRepository)
-    {
-        parent::__construct($dataClass, $validationGroups);
-        $this->customerRepository = $customerRepository;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options = array())
     {
+        parent::buildForm($builder, $options);
+
         $builder
             ->add('firstName', 'text', array(
                 'label' => 'sylius.form.customer.first_name',
@@ -51,28 +32,7 @@ class CustomerRegistrationType extends AbstractResourceType
             ->add('lastName', 'text', array(
                 'label' => 'sylius.form.customer.last_name',
             ))
-            ->add('email', 'email', array(
-                'label' => 'sylius.form.customer.email',
-            ))
-            ->add('user', 'sylius_user_registration', array(
-                'label' => false,
-            ))
-            ->addEventSubscriber(new CustomerRegistrationFormListener($this->customerRepository))
-            ->addEventSubscriber(new UserRegistrationFormListener())
-            ->setDataLocked(false)
         ;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(array(
-            'data_class' => $this->dataClass,
-            'validation_groups' => $this->validationGroups,
-            'cascade_validation' => true,
-        ));
     }
 
     /**

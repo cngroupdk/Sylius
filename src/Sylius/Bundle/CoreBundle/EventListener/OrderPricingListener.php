@@ -50,12 +50,12 @@ class OrderPricingListener
         $order = $event->getSubject();
 
         if (!$order instanceof OrderInterface) {
-            throw new UnexpectedTypeException($order, 'Sylius\Component\Order\Model\OrderInterface');
+            throw new UnexpectedTypeException($order, 'Sylius\Component\Core\Model\OrderInterface');
         }
 
         $context = array();
         if (null !== $customer = $order->getCustomer()) {
-            $context['customer']   = $customer;
+            $context['customer'] = $customer;
             $context['groups'] = $customer->getGroups()->toArray();
         }
 

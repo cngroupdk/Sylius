@@ -4,8 +4,8 @@ namespace spec\Sylius\Component\Translation\Model;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Sylius\Component\Translation\Model\TranslatableInterface;
 use Sylius\Component\Translation\Model\AbstractTranslation;
+use Sylius\Component\Translation\Model\TranslatableInterface;
 
 class AbstractTranslationSpec extends ObjectBehavior
 {
@@ -21,7 +21,7 @@ class AbstractTranslationSpec extends ObjectBehavior
 
     function its_translatable_is_mutabale(TranslatableInterface $translatable)
     {
-        $this->setTranslatable($translatable)->shouldReturn($this);
+        $this->setTranslatable($translatable);
         $this->getTranslatable()->shouldReturn($translatable);
     }
 
@@ -39,7 +39,7 @@ class AbstractTranslationSpec extends ObjectBehavior
 
     function its_locale_is_mutable()
     {
-        $this->setLocale('en')->shouldReturn($this);
+        $this->setLocale('en');
         $this->getLocale()->shouldReturn('en');
     }
 }

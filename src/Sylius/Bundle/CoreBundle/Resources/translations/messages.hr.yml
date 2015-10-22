@@ -25,6 +25,11 @@ sylius:
     group:
       name: Naziv grupe
       roles: Role (korisnička prava)
+    channel:
+      taxonomies: Glavne kategorije
+      locales: Lokaliteti
+      shipping_methods: Načini slanja
+      payment_methods: Načini plaćanja
     image:
       file: Fotografija
     locale:
@@ -36,7 +41,7 @@ sylius:
       number: Broj
       total_from: Od
       total_to: Do
-      payment_state: Stanje uplate
+      payment_state: Stanje plaćanja
     page:
       body: Sadržaj stranice
       id: ID
@@ -64,6 +69,10 @@ sylius:
       created_at_to: Do
       number: Broj narudžbe
       shipping_address: Pošalji na ime
+    payment_filter:
+      created_at_from: Od
+      created_at_to: Do
+      number: Broj narudžbe
     shipping_method:
       zone: Regija
     taxon:
@@ -76,6 +85,7 @@ sylius:
       enabled: Aktivan
       first_name: Ime
       groups: Grupe
+      roles: Role (korisnička prava)
       last_name: Prezime
       password: Lozinka
       shipping_address: Adresa za dostavu
@@ -91,3 +101,8 @@ sylius:
       sku: KOD (SKU)
       weight: Težina
       width: Širina
+    attribute:
+      product_attribute_value:
+        value: Vrijednost
+    guest:
+      email: Email

@@ -5,13 +5,13 @@ Feature: Currency management
     I want to configure currencies and exchange rates
 
     Background:
-        Given there are following currencies configured:
+        Given store has default configuration
+          And there are following currencies configured:
             | code | exchange rate | enabled |
             | USD  | 0.76496       | yes     |
             | GBP  | 1.16998       | no      |
             | EUR  | 1.00000       | yes     |
             | AUD  | 0.73986       | yes     |
-          And there is default channel configured
           And I am logged in as administrator
 
     Scenario: Browsing all configured currencies
@@ -19,7 +19,7 @@ Feature: Currency management
         When I follow "Currencies"
         Then I should be on the currency index page
         And I should see 4 currencies in the list
-        And I should see currency with rate "0.73986" in the list
+        And I should see currency with exchange rate "0.73986" in the list
 
     Scenario: Seeing empty index of currencies
         Given there are no currencies
@@ -56,11 +56,18 @@ Feature: Currency management
         And I fill in "Exchange rate" with "0.76498"
         And I press "Save changes"
         Then I should be on the currency index page
-        And I should see currency with rate "0.76498" in the list
+        And I should see currency with exchange rate "0.76498" in the list
 
-    Scenario: Deleting a currency
-        Given I am on the currency index page
-        When I press "delete" near "US Dollar"
-        Then I should still be on the currency index page
-        And I should see "Currency has been successfully deleted."
-        And I should not see currency with name "US Dollar" in the list
+    Scenario: Enabling currency
+        Given there is a disabled currency "VEF"
+        And I am on the currency index page
+        When I click "Enable" near "VEF"
+        Then I should see enabled currency with code "VEF" in the list
+        And I should see "Currency has been successfully enabled"
+
+    Scenario: Disabling currency
+        Given there is an enabled currency "VEF"
+        And I am on the currency index page
+        When I click "Disable" near "VEF"
+        Then I should see disabled currency with code "VEF" in the list
+        And I should see "Currency has been successfully disabled"

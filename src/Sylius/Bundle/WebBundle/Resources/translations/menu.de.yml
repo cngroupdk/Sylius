@@ -6,24 +6,24 @@ sylius:
     menu:
       main:
         assortment: Kollektionen
+        blocks: Blöcke
         configuration: Konfiguration
         countries: Länder
-        customer: Kunden
+        content: Inhalt
         dashboard: Dashboard
-        exchange_rates: Wechselkurse
         general_settings: Allgemeine Einstellungen
+        groups: Gruppen
         homepage: Dein Shop
         locales: Gebietsschemata
-        new_order: Neue Bestellung
-        new_promotion: Neue Aktion
+        new_order: Neue Bestellung hinzufügen
+        new_promotion: Neuen Gutschein hinzufügen
         options: Produktoptionen verwalten
         orders: Aktuelle Bestellungen
+        pages: Seiten
         payment_methods: Bezahlmethoden
         payments: Zahlungen
         products: Produkte
         promotions: Aktionen
-        properties: Eigenschaften
-        archetypes: archetypen
         sales: Aufträge
         shipments: Lieferungen
         shipping_categories: Versandgruppen
@@ -33,17 +33,15 @@ sylius:
         tax_rates: Steuersätze
         taxation_settings: Besteuerung
         taxonomies: Kategorien
-        users: Benutzer
         zones: Versandgebiete
+        roles: Rollen
       sidebar:
         assortment: Kollektionen
         blocks: Blöcke
         configuration: Konfiguration
         content: Inhalt
         countries: Länder
-        customer: Kunden
         dashboard: Dashboard
-        exchange_rates: Wechselkurse
         general_settings: Allgemeine Einstellungen
         groups: Gruppen
         homepage: Zurück zum Frontend
@@ -53,23 +51,23 @@ sylius:
         options: Produktoptionen verwalten
         orders: Aktuelle Bestellungen
         pages: Seiten
+        routes: Pfade
         payment_methods: Bezahlmethoden
         payments: Zahlungen
         products: Produkte
         promotions: Aktionen
-        properties: Eigenschaten
-        archetypes: archetypen
         sales: Aufträge
         shipments: Lieferungen
         shipping_categories: Versandgruppen
         shipping_methods: Versandmethoden
+        slideshow: Slideshow
         stockables: Lagerbestände
         tax_categories: Steuerkategorien
         tax_rates: Steuersätze
         taxation_settings: Gruppeneinstellungen
         taxonomies: Gruppierung
-        users: Benutzer
         zones: Versandgebiete
+        roles: Rollen
   frontend:
     menu:
       account:

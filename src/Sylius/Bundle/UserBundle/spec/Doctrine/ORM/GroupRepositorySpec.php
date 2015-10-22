@@ -11,11 +11,11 @@
 
 namespace spec\Sylius\Bundle\UserBundle\Doctrine\ORM;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\EntityManager;
 
 class GroupRepositorySpec extends ObjectBehavior
 {
@@ -38,7 +38,7 @@ class GroupRepositorySpec extends ObjectBehavior
     {
         $em->createQueryBuilder()->shouldBeCalled()->willReturn($builder);
         $builder->select('o')->shouldBeCalled()->willReturn($builder);
-        $builder->from(Argument::any(), 'o')->shouldBeCalled();
+        $builder->from(Argument::any(), 'o', Argument::cetera())->shouldBeCalled();
 
         $this->getFormQueryBuilder();
     }

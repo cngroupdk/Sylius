@@ -30,3 +30,6 @@ sylius:
       enabled: Etkin?
       gateway: Ağ Geçidi
       name: Ad
+      fee_calculator:
+        fixed:
+          amount: Miktar

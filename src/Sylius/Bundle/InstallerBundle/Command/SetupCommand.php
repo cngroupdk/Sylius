@@ -11,6 +11,7 @@
 
 namespace Sylius\Bundle\InstallerBundle\Command;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,6 +25,16 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SetupCommand extends AbstractInstallCommand
 {
+    /**
+     * @var array
+     */
+    private $currencies = array();
+
+    /**
+     * @var array
+     */
+    private $locales = array();
+
     /**
      * {@inheritdoc}
      */
@@ -97,7 +108,7 @@ EOT
             } while ($exists);
 
             $user->setEmail($email);
-            $user->setPlainPassword($this->askHidden($output, 'Choose password:', array(new NotBlank())));
+            $user->setPlainPassword($this->getAdministratorPassword($output));
         }
 
         $user->setEnabled(true);
@@ -117,13 +128,7 @@ EOT
         $localeManager = $this->get('sylius.manager.locale');
 
         do {
-            if ($input->getOption('no-interaction')) {
-                $locales = array('en_US');
-            } else {
-                $output->writeln('Please enter list of locale codes, separated by commas or just hit ENTER to use "en_US". For example "en_US, de_DE".');
-                $codes = $this->ask($output, '<question>In which language your customers can browse the store?</question> ', array(), 'en_US');
-                $locales = explode(',', $codes);
-            }
+            $locales = $this->getLocalesCodes($input, $output);
 
             $valid = true;
 
@@ -147,12 +152,15 @@ EOT
 
             $output->writeln(sprintf('Adding <info>%s</info>.', $name));
 
-            if (null !== $localeRepository->findOneByCode($code)) {
+            if (null !== $existingLocale = $localeRepository->findOneByCode($code)) {
+                $this->locales[] = $existingLocale;
+
                 continue;
             }
 
             $locale = $localeRepository->createNew();
             $locale->setCode($code);
+            $this->locales[] = $locale;
 
             $localeManager->persist($locale);
         }
@@ -170,13 +178,7 @@ EOT
         $currencyManager = $this->get('sylius.manager.currency');
 
         do {
-            if ($input->getOption('no-interaction')) {
-                $currencies = array('USD');
-            } else {
-                $output->writeln('Please enter list of currency codes, separated by commas or just hit ENTER to use "USD". For example "USD, EUR, GBP".');
-                $codes = $this->ask($output, '<question>In which currency your customers can buy goods?</question> ', array(), 'USD');
-                $currencies = explode(',', $codes);
-            }
+            $currencies = $this->getCurrenciesCodes($input, $output);
 
             $valid = true;
 
@@ -195,13 +197,16 @@ EOT
             $name = Intl::getCurrencyBundle()->getCurrencyName($code);
             $output->writeln(sprintf('Adding <info>%s</info>.', $name));
 
-            if (null !== $currencyRepository->findOneByCode($code)) {
+            if (null !== $existingCurrency = $currencyRepository->findOneByCode($code)) {
+                $this->currencies[] = $existingCurrency;
+
                 continue;
             }
 
             $currency = $currencyRepository->createNew();
             $currency->setCode($code);
             $currency->setExchangeRate(1);
+            $this->currencies[] = $currency;
 
             $currencyManager->persist($currency);
         }
@@ -219,13 +224,7 @@ EOT
         $countryManager = $this->get('sylius.manager.country');
 
         do {
-            if ($input->getOption('no-interaction')) {
-                $countries = array('US');
-            } else {
-                $output->writeln('Please enter list of country codes, separated by commas or just hit ENTER to use "US". For example "US, PL, DE".');
-                $codes = $this->ask($output, '<question>To which countries you are going to sell your goods?</question> ', array(), 'US');
-                $countries = explode(',', $codes);
-            }
+            $countries = $this->getCountriesCodes($input, $output);
             
             $valid = true;
 
@@ -249,7 +248,6 @@ EOT
             }
 
             $country = $countryRepository->createNew();
-            $country->setName($name);
             $country->setIsoName($code);
 
             $countryManager->persist($country);
@@ -267,13 +265,7 @@ EOT
         $channelRepository = $this->get('sylius.repository.channel');
         $channelManager = $this->get('sylius.manager.channel');
 
-        if ($input->getOption('no-interaction')) {
-            $channels = array('DEFAULT');
-        } else {
-            $output->writeln('Please enter a list of channels, separated by commas or just hit ENTER to use "DEFAULT". For example "WEB-UK, WEB-DE, MOBILE".');
-            $codes = $this->ask($output, '<question>On which channels are you going to sell your goods?</question> ', array(), 'DEFAULT');
-            $channels = explode(',', $codes);
-        }
+        $channels = $this->getChannelsCodes($input, $output);
 
         foreach ($channels as $code) {
             $output->writeln(sprintf('Adding <info>%s</info>.', $code));
@@ -288,10 +280,120 @@ EOT
             $channel->setCode($code);
             $channel->setName($code);
             $channel->setColor(null);
+            $channel->setCurrencies(new ArrayCollection($this->currencies));
+            $channel->setLocales(new ArrayCollection($this->locales));
 
             $channelManager->persist($channel);
         }
 
         $channelManager->flush();
+    }
+
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return array
+     */
+    private function getChannelsCodes(InputInterface $input, OutputInterface $output)
+    {
+        return $this->getCodes(
+            $input,
+            $output,
+            'On which channels are you going to sell your goods?',
+            'Please enter a list of channels, separated by commas or just hit ENTER to use "DEFAULT". For example "WEB-UK, WEB-DE, MOBILE".',
+            'DEFAULT'
+        );
+    }
+
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return array
+     */
+    private function getCurrenciesCodes(InputInterface $input, OutputInterface $output)
+    {
+        return $this->getCodes(
+            $input,
+            $output,
+            'In which currency your customers can buy goods?',
+            'Please enter list of currency codes, separated by commas or just hit ENTER to use "USD". For example "USD, EUR, GBP".',
+            'USD'
+        );
+    }
+
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return array
+     */
+    private function getLocalesCodes(InputInterface $input, OutputInterface $output)
+    {
+        return $this->getCodes(
+            $input,
+            $output,
+            'In which language your customers can browse the store?',
+            'Please enter list of locale codes, separated by commas or just hit ENTER to use "en_US". For example "en_US, de_DE".',
+            'en_US'
+        );
+    }
+
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return array
+     */
+    private function getCountriesCodes(InputInterface $input, OutputInterface $output)
+    {
+        return $this->getCodes(
+            $input,
+            $output,
+            'To which countries you are going to sell your goods?',
+            'Please enter list of country codes, separated by commas or just hit ENTER to use "US". For example "US, PL, DE".',
+            'US'
+        );
+    }
+
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @param string          $question
+     * @param string          $description
+     * @param string          $defaultAnswer
+     *
+     * @return array
+     */
+    private function getCodes(InputInterface $input, OutputInterface $output, $question, $description, $defaultAnswer)
+    {
+        if ($input->getOption('no-interaction')) {
+            return array($defaultAnswer);
+        }
+
+        $output->writeln($description);
+        $codes = $this->ask($output, '<question>'.$question.'</question> ', array(), $defaultAnswer);
+
+        return explode(',', $codes);
+    }
+
+    /**
+     * @param OutputInterface $output
+     *
+     * @return mixed
+     */
+    private function getAdministratorPassword(OutputInterface $output)
+    {
+        do {
+            $password = $this->askHidden($output, 'Choose password:', array(new NotBlank()));
+            $repeatedPassword = $this->askHidden($output, 'Repeat password:', array(new NotBlank()));
+
+            if ($repeatedPassword !== $password) {
+                $output->writeln('<error>Passwords does not match confirmation!</error>');
+            }
+        } while ($repeatedPassword !== $password);
+
+        return $password;
     }
 }

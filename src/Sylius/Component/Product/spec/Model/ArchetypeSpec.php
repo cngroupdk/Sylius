@@ -13,8 +13,8 @@ namespace spec\Sylius\Component\Product\Model;
 
 use Doctrine\Common\Collections\Collection;
 use PhpSpec\ObjectBehavior;
-use Sylius\Component\Product\Model\AttributeInterface;
 use Sylius\Component\Product\Model\ArchetypeInterface;
+use Sylius\Component\Product\Model\AttributeInterface;
 
 /**
  * @author Paweł Jędrzejewski <pawel@sylius.org>
@@ -98,16 +98,5 @@ class ArchetypeSpec extends ObjectBehavior
         $this->setParent($parent);
         $this->getParent()->shouldReturn($parent);
         $this->hasParent()->shouldReturn(true);
-    }
-
-    function it_has_fluent_interface(Collection $attributes, AttributeInterface $attribute)
-    {
-        $date = new \DateTime();
-
-        $this->setAttributes($attributes)->shouldReturn($this);
-        $this->addAttribute($attribute)->shouldReturn($this);
-        $this->removeAttribute($attribute)->shouldReturn($this);
-        $this->setCreatedAt($date)->shouldReturn($this);
-        $this->setUpdatedAt($date)->shouldReturn($this);
     }
 }

@@ -42,11 +42,11 @@ liip_imagine:
 knp_snappy:
     pdf:
         enabled:    true
-        binary:     /usr/bin/wkhtmltopdf
+        binary:     %wkhtmltopdf.bin_path%
         options:    []
     image:
         enabled:    true
-        binary:     /usr/bin/wkhtmltoimage
+        binary:     %wkhtmltoimage.bin_path%
         options:    []
 
 sonata_block:
@@ -88,6 +88,7 @@ hwi_oauth:
             client_id:     %sylius.oauth.facebook.clientid%
             client_secret: %sylius.oauth.facebook.clientsecret%
             scope:         "email"
+            infos_url:     "https://graph.facebook.com/me?fields=id,name,email"
             options:
                 display: popup
         google:
@@ -157,6 +158,6 @@ jms_serializer:
                 path: "@SyliusVariationBundle/Resources/config/serializer"
 
 a2lix_translation_form:
-    locale_provider: sylius.locale_provider
+    locale_provider: sylius.a2lix_locale_provider
     manager_registry: doctrine
     templating: "A2lixTranslationFormBundle::default.html.twig"

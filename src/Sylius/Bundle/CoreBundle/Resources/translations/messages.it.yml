@@ -25,6 +25,11 @@ sylius:
     group:
       name: Nome
       roles: Regole
+    channel:
+      taxonomies: Tassonomie
+      locales: Localizzazioni
+      shipping_methods: Metodi di spedizione
+      payment_methods: Metodi di pagamento
     image:
       file: Immagine
     locale:
@@ -36,7 +41,7 @@ sylius:
       number: Numero
       total_from: Da
       total_to: A
-      payment_state: Stato del pagamento
+      payment_state: Stato pagamento
     page:
       body: Testo
       id: ID
@@ -64,6 +69,10 @@ sylius:
       created_at_to: A
       number: "Numero d'ordine"
       shipping_address: Spedisci a
+    payment_filter:
+      created_at_from: Da
+      created_at_to: A
+      number: "Numero d'ordine"
     shipping_method:
       zone: Zona
     taxon:
@@ -76,6 +85,7 @@ sylius:
       enabled: Abilitato
       first_name: Nome
       groups: Gruppi
+      roles: Regole
       last_name: Cognome
       password: Password
       shipping_address: Indirizzo di spedizione
@@ -91,3 +101,8 @@ sylius:
       sku: SKU
       weight: Peso
       width: Larghezza
+    attribute:
+      product_attribute_value:
+        value: Valore
+    guest:
+      email: Email

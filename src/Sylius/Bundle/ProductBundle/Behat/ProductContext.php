@@ -14,6 +14,7 @@ namespace Sylius\Bundle\ProductBundle\Behat;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\Common\Collections\ArrayCollection;
 use Sylius\Bundle\ResourceBundle\Behat\DefaultContext;
+use Sylius\Component\Core\Model\ProductInterface;
 
 class ProductContext extends DefaultContext
 {
@@ -48,9 +49,8 @@ class ProductContext extends DefaultContext
                 $productAttribute = $this->findOneByName('product_attribute', trim($attribute[0]));
                 $attributeValue =  $this->getRepository('product_attribute_value')->createNew();
 
-                $attributeValue
-                    ->setAttribute($productAttribute)
-                    ->setValue($attribute[1]);
+                $attributeValue->setAttribute($productAttribute);
+                $attributeValue->setValue($attribute[1]);
 
                 $product->addAttribute($attributeValue);
             }
@@ -89,6 +89,10 @@ class ProductContext extends DefaultContext
                 $product->setDeletedAt(new \DateTime());
             }
 
+            if (isset($data['pricing calculator']) && '' !== $data['pricing calculator']) {
+                $this->configureProductPricingCalculator($product, $data);
+            }
+
             $manager->persist($product);
         }
 
@@ -104,10 +108,8 @@ class ProductContext extends DefaultContext
         $repository = $this->getRepository('product_archetype');
 
         $archetype = $repository->createNew();
-        $archetype
-            ->setName($name)
-            ->setCode($name)
-        ;
+        $archetype->setName($name);
+        $archetype->setCode($name);
 
         $data = $table->getRowsHash();
 
@@ -233,11 +235,13 @@ class ProductContext extends DefaultContext
 
         foreach ($table->getHash() as $data) {
             $productTranslation = $this->findOneByName('product_translation', $data['product']);
+
             $product = $productTranslation->getTranslatable();
             $product->setCurrentLocale($data['locale']);
-            $product
-                ->setName($data['name'])
-                ->setDescription('...');
+            $product->setFallbackLocale($data['locale']);
+
+            $product->setName($data['name']);
+            $product->setDescription('...');
         }
 
         $manager->flush();
@@ -256,7 +260,7 @@ class ProductContext extends DefaultContext
     }
 
     /**
-     * @Given the following attribute translations exist
+     * @Given the following attribute translations exist:
      */
     public function theFollowingAttributeTranslationsExist(TableNode $table)
     {
@@ -264,16 +268,17 @@ class ProductContext extends DefaultContext
 
         foreach ($table->getHash() as $data) {
             $attribute = $this->findOneByName('product_attribute', $data['attribute']);
-            $attribute
-                ->setCurrentLocale($data['locale'])
-                ->setPresentation($data['presentation']);
+            $attribute->setCurrentLocale($data['locale']);
+            $attribute->setFallbackLocale($data['locale']);
+
+            $attribute->setPresentation($data['presentation']);
         }
 
         $manager->flush();
     }
 
     /**
-     * @Given the following option translations exist
+     * @Given the following option translations exist:
      */
     public function theFollowingOptionTranslationsExist(TableNode $table)
     {
@@ -281,11 +286,48 @@ class ProductContext extends DefaultContext
 
         foreach ($table->getHash() as $data) {
             $option = $this->findOneByName('product_option', $data['option']);
-            $option
-                ->setCurrentLocale($data['locale'])
-                ->setPresentation($data['presentation']);
+            $option->setCurrentLocale($data['locale']);
+            $option->setFallbackLocale($data['locale']);
+
+            $option->setPresentation($data['presentation']);
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @param ProductInterface $product
+     * @param array            $data
+     */
+    private function configureProductPricingCalculator(ProductInterface $product, array $data)
+    {
+        $product->getMasterVariant()->setPricingCalculator($data['pricing calculator']);
+
+        if (!isset($data['calculator configuration']) || '' === $data['calculator configuration']) {
+            throw new \InvalidArgumentException('You must set chosen calculator configuration');
+        }
+
+        $product->getMasterVariant()->setPricingConfiguration($this->getPricingCalculatorConfiguration($data));
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    private function getPricingCalculatorConfiguration(array $data)
+    {
+        $calculatorConfiguration = $this->getConfiguration($data['calculator configuration']);
+
+        $finalCalculatorConfiguration = array();
+        $channelRepository = $this->getRepository('channel');
+
+        foreach ($calculatorConfiguration as $channelCode => $price) {
+            $channel = $channelRepository->findOneBy(array('code' => $channelCode));
+
+            $finalCalculatorConfiguration[$channel->getId()] = (int) round($price * 100);
+        }
+
+        return $finalCalculatorConfiguration;
     }
 }

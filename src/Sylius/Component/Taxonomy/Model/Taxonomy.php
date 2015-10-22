@@ -13,25 +13,20 @@ namespace Sylius\Component\Taxonomy\Model;
 
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Translation\Model\AbstractTranslatable;
+use Sylius\Component\Translation\Model\TranslationInterface;
 
 /**
- * Model for taxonomies.
- *
  * @author Paweł Jędrzejewski <pawel@sylius.org>
  * @author Gonzalo Vilaseca <gvilaseca@reiss.co.uk>
  */
 class Taxonomy extends AbstractTranslatable implements TaxonomyInterface
 {
     /**
-     * Taxonomy id.
-     *
      * @var mixed
      */
     protected $id;
 
     /**
-     * Root taxon.
-     *
      * @var TaxonInterface
      */
     protected $root;
@@ -67,8 +62,6 @@ class Taxonomy extends AbstractTranslatable implements TaxonomyInterface
     {
         $this->translate()->setName($name);
         $this->root->setName($name);
-
-        return $this;
     }
 
     /**
@@ -76,11 +69,11 @@ class Taxonomy extends AbstractTranslatable implements TaxonomyInterface
      */
     public function setCurrentLocale($currentLocale)
     {
+        parent::setCurrentLocale($currentLocale);
+
         if (null !== $this->root) {
             $this->root->setCurrentLocale($currentLocale);
         }
-
-        return parent::setCurrentLocale($currentLocale);
     }
 
     /**
@@ -88,11 +81,11 @@ class Taxonomy extends AbstractTranslatable implements TaxonomyInterface
      */
     public function setFallbackLocale($fallbackLocale)
     {
+        parent::setFallbackLocale($fallbackLocale);
+
         if (null !== $this->root) {
             $this->root->setFallbackLocale($fallbackLocale);
         }
-
-        return parent::setFallbackLocale($fallbackLocale);
     }
 
     /**
@@ -113,8 +106,6 @@ class Taxonomy extends AbstractTranslatable implements TaxonomyInterface
         $root->setFallbackLocale($this->getFallbackLocale());
 
         $this->root = $root;
-
-        return $this;
     }
 
     /**
@@ -149,8 +140,6 @@ class Taxonomy extends AbstractTranslatable implements TaxonomyInterface
     public function addTaxon(TaxonInterface $taxon)
     {
         $this->root->addChild($taxon);
-
-        return $this;
     }
 
     /**
@@ -159,7 +148,25 @@ class Taxonomy extends AbstractTranslatable implements TaxonomyInterface
     public function removeTaxon(TaxonInterface $taxon)
     {
         $this->root->removeChild($taxon);
+    }
 
-        return $this;
+    /**
+     * {@inheritdoc}
+     */
+    public static function getTranslationClass()
+    {
+        return get_class().'Translation';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addTranslation(TranslationInterface $translation)
+    {
+        parent::addTranslation($translation);
+
+        if ($translation instanceof TaxonomyTranslation) {
+            $this->root->setName($translation->getName());
+        }
     }
 }

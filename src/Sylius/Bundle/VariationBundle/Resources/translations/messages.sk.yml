@@ -3,7 +3,11 @@
 
 sylius:
   form:
+    variant:
+      presentation: Prezentácia
     option:
+      name: Interný názov
+      presentation: Prezentácia
       values: Možné hodnoty
     option_value:
       add_value: Pridať hodnotu

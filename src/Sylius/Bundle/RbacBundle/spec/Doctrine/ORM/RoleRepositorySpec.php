@@ -11,14 +11,14 @@
 
 namespace spec\Sylius\Bundle\RbacBundle\Doctrine\ORM;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Sylius\Component\Rbac\Model\RoleInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\QueryBuilder;
 
 /**
  * @author Arnaud Langlade <arn0d.dev@gmail.com>
@@ -37,7 +37,6 @@ class RoleRepositorySpec extends ObjectBehavior
 
     function it_gets_chield_roles(
         $em,
-        $builder,
         RoleInterface $role,
         QueryBuilder $builder,
         AbstractQuery $query,
@@ -52,7 +51,7 @@ class RoleRepositorySpec extends ObjectBehavior
 
         $em->createQueryBuilder()->shouldBeCalled()->willReturn($builder);
         $builder->select('o')->shouldBeCalled()->willReturn($builder);
-        $builder->from(Argument::any(), 'o')->shouldBeCalled()->willReturn($builder);
+        $builder->from(Argument::any(), 'o', Argument::cetera())->shouldBeCalled()->willReturn($builder);
         $builder->where(Argument::type('Doctrine\ORM\Query\Expr'))->shouldBeCalled()->willReturn($builder);
         $builder->andWhere(Argument::type('Doctrine\ORM\Query\Expr'))->shouldBeCalled()->willReturn($builder);
 

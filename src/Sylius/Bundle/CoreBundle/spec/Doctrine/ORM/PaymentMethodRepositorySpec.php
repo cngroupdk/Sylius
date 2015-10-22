@@ -3,11 +3,11 @@
 namespace spec\Sylius\Bundle\CoreBundle\Doctrine\ORM;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\EntityManager;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
 
@@ -38,7 +38,9 @@ class PaymentMethodRepositorySpec extends ObjectBehavior
     ) {
         $em->createQueryBuilder()->shouldBeCalled()->willReturn($builder);
         $builder->select('method')->shouldBeCalled()->willReturn($builder);
-        $builder->from(Argument::any(), 'method')->shouldBeCalled()->willReturn($builder);
+        $builder->addSelect('translation')->shouldBeCalled()->willReturn($builder);
+        $builder->leftJoin("method.translations", "translation")->shouldBeCalled()->willReturn($builder);
+        $builder->from(Argument::any(), 'method', Argument::cetera())->shouldBeCalled()->willReturn($builder);
         $builder->andWhere('method IN (:methods)')->shouldBeCalled()->willReturn($builder);
 
         $channel->getPaymentMethods()->shouldBeCalled()->willReturn($paymentMethods);

@@ -11,10 +11,8 @@
 
 namespace spec\Sylius\Component\Archetype\Model;
 
-use Doctrine\Common\Collections\Collection;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Sylius\Component\Attribute\Model\AttributeInterface;
 
 /**
  * @author Gonzalo Vilaseca <gvilaseca@reiss.co.uk>
@@ -45,12 +43,5 @@ class ArchetypeTranslationSpec extends ObjectBehavior
     {
         $this->setName('T-Shirt size');
         $this->getName()->shouldReturn('T-Shirt size');
-    }
-
-    function it_has_fluent_interface(Collection $attributes, AttributeInterface $attribute)
-    {
-        $date = new \DateTime();
-
-        $this->setName('T-Shirt')->shouldReturn($this);
     }
 }

@@ -13,7 +13,6 @@ namespace spec\Sylius\Component\Addressing\Model;
 
 use PhpSpec\ObjectBehavior;
 use Sylius\Component\Addressing\Model\ProvinceInterface;
-use Sylius\Component\Addressing\Model\ZoneInterface;
 
 /**
  * @author Saša Stamenković <umpirsky@gmail.com>
@@ -58,11 +57,5 @@ class ZoneMemberProvinceSpec extends ObjectBehavior
         $this->setProvince($province);
 
         $this->getName()->shouldReturn('Łódzkie');
-    }
-
-    function it_has_fluent_interface(ProvinceInterface $province, ZoneInterface $zone)
-    {
-        $this->setProvince($province)->shouldReturn($this);
-        $this->setBelongsTo($zone)->shouldReturn($this);
     }
 }
